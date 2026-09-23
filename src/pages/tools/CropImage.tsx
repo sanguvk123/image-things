@@ -13,7 +13,7 @@ import {
   type AspectRatio,
   type CropRect,
 } from '@/image/crop';
-import type { Tool } from '@/tools/registry';
+import { headingFor, type Tool } from '@/tools/registry';
 
 /**
  * Crop (spec §20): a simple visual crop, explicitly not a Photoshop editor.
@@ -92,7 +92,7 @@ export function CropImage({ tool }: { tool: Tool }) {
       </Link>
 
       <h1 className="mt-5 text-3xl font-semibold tracking-[-0.025em] text-ink">
-        {tool.title}
+        {headingFor(tool)}
       </h1>
       <p className="mt-2 text-ink-soft">{tool.description}</p>
 

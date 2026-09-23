@@ -16,7 +16,7 @@ import {
 } from '@/image/pipeline';
 import { buildPdf, type PdfPage } from '@/image/pdf';
 import { outputFileName } from '@/image/format';
-import type { Tool } from '@/tools/registry';
+import { headingFor, type Tool } from '@/tools/registry';
 
 /**
  * Image → PDF (spec §9).
@@ -129,7 +129,7 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
       </Link>
 
       <h1 className="mt-5 text-3xl font-semibold tracking-[-0.025em] text-ink">
-        {tool.title}
+        {headingFor(tool)}
       </h1>
       <p className="mt-2 text-ink-soft">{tool.description}</p>
 

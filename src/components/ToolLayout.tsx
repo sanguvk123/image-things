@@ -5,7 +5,7 @@ import { ImagePreview } from './ImagePreview';
 import { ResultPanel } from './ResultPanel';
 import { ErrorNote } from './controls';
 import type { LoadedImage, ProcessedImage } from '@/image/pipeline';
-import type { Tool } from '@/tools/registry';
+import { headingFor, type Tool } from '@/tools/registry';
 
 interface ToolLayoutProps {
   tool: Tool;
@@ -58,7 +58,7 @@ export function ToolLayout({
       </Link>
 
       <h1 className="mt-5 text-3xl font-semibold tracking-[-0.025em] text-ink">
-        {tool.title}
+        {headingFor(tool)}
       </h1>
       <p className="mt-2 text-ink-soft">{tool.description}</p>
 

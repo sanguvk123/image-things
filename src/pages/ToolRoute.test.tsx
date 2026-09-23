@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { TOOLS } from '@/tools/registry';
+import { TOOLS, headingFor } from '@/tools/registry';
 import { installCanvasStubs, type CanvasStub } from '@/test/canvas';
 import { renderTool } from '@/test/tool';
 
@@ -12,13 +12,16 @@ beforeEach(() => {
 afterEach(() => canvas.restore());
 
 describe('tool routing', () => {
-  test.each(TOOLS.map((tool) => [tool.slug, tool.title] as const))(
+  test.each(TOOLS.map((tool) => [tool.slug, headingFor(tool)] as const))(
     '/%s renders a working tool page',
-    (slug, title) => {
+    (slug, heading) => {
       renderTool(slug);
 
+      // The h1 must match the search intent the page is built for, not a
+      // generic tool name, or the landing page fails the visitor arriving
+      // from a very specific query.
       expect(
-        screen.getByRole('heading', { level: 1, name: title }),
+        screen.getByRole('heading', { level: 1, name: heading }),
       ).toBeInTheDocument();
 
       // Every tool must be usable, not a placeholder.
