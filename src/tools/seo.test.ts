@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { TOOLS } from './registry';
+import { TOOLS, getTool } from './registry';
 import {
   HOME_META,
   MAX_DESCRIPTION_LENGTH,
@@ -60,6 +60,24 @@ describe('tool metadata', () => {
       )
       .map((meta) => `${meta.canonical} (${meta.description.length})`);
     expect(outOfRange).toEqual([]);
+  });
+
+  it('points every alias at a tool that exists', () => {
+    const broken = TOOLS.filter(
+      (tool) => tool.aliasOf && getTool(tool.aliasOf) === undefined,
+    ).map((tool) => `${tool.slug} -> ${tool.aliasOf}`);
+
+    expect(broken).toEqual([]);
+  });
+
+  it('never makes an alias point at another alias', () => {
+    // A chain would mean no single canonical destination for the intent.
+    const chained = TOOLS.filter((tool) => {
+      const target = tool.aliasOf ? getTool(tool.aliasOf) : undefined;
+      return target?.aliasOf !== undefined;
+    }).map((tool) => tool.slug);
+
+    expect(chained).toEqual([]);
   });
 
   it('includes the homepage and every tool exactly once', () => {

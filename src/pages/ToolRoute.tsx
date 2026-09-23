@@ -33,6 +33,10 @@ import { RemoveBackground } from './tools/RemoveBackground';
  */
 const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'compress-image': CompressImage,
+  // Problem-phrased URLs resolve to the tool that actually solves them.
+  'reduce-image-size': CompressImage,
+  'make-image-smaller': CompressImage,
+  'make-jpg-smaller': CompressImage,
   'compress-jpg': CompressImage,
   'compress-png': CompressImage,
   'compress-webp': CompressImage,
@@ -49,6 +53,7 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'compress-jpg-to-500kb': CompressToSize,
   'compress-png-to-100kb': CompressToSize,
   'resize-image': ResizeImage,
+  'change-image-size': ResizeImage,
   'resize-jpg': ResizeImage,
   'resize-png': ResizeImage,
   'resize-image-by-pixels': ResizeImage,
@@ -87,6 +92,8 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'image-metadata-viewer': ViewMetadata,
   'exif-viewer': ViewMetadata,
   'image-to-pdf': ImageToPdf,
+  'jpg-to-pdf': ImageToPdf,
+  'png-to-pdf': ImageToPdf,
   'upscale-image': UpscaleImage,
   'remove-background': RemoveBackground,
 };

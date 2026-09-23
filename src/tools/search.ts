@@ -124,7 +124,7 @@ export function searchTools(query: string, limit = 8): Tool[] {
     scored.push({ tool, score: total });
   }
 
-  return scored
+  const ranked = scored
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       // Stable, predictable tie-break: popular tools first, then alphabetical.
@@ -132,6 +132,23 @@ export function searchTools(query: string, limit = 8): Tool[] {
       if (popularity !== 0) return popularity;
       return a.tool.title.localeCompare(b.tool.title);
     })
-    .slice(0, limit)
     .map((entry) => entry.tool);
+
+  return withoutRedundantAliases(ranked).slice(0, limit);
+}
+
+/**
+ * Drop alias pages whose canonical tool is already in the results.
+ *
+ * "Make Image Smaller" and "Reduce Image Size" are doors into the same room.
+ * Listing them next to Compress Image pads the results with three ways of
+ * saying one thing and pushes genuinely different tools off the list.
+ *
+ * They are only dropped when the canonical tool is present: a query phrased
+ * the alias's way ("make image smaller") may not match the canonical tool's
+ * own wording at all, and returning nothing would be far worse.
+ */
+function withoutRedundantAliases(tools: Tool[]): Tool[] {
+  const present = new Set(tools.map((tool) => tool.slug));
+  return tools.filter((tool) => !(tool.aliasOf && present.has(tool.aliasOf)));
 }

@@ -60,6 +60,16 @@ export interface Tool {
   /** Preselected compression preset, for intent-specific landing pages. */
   defaultCompression?: CompressionPreset;
   /**
+   * The canonical tool this page is a differently-phrased entry point to,
+   * e.g. /make-image-smaller -> compress-image.
+   *
+   * These pages earn their place in Google, where people search in their own
+   * words. On the site's own search they are noise: someone already here does
+   * not need three ways to say "compress", so search ranks them below the
+   * canonical tool.
+   */
+  aliasOf?: string;
+  /**
    * Exact output dimensions a page is built for, e.g. /resize-image-to-1080x1080.
    * The tool opens with these already filled in.
    */
@@ -72,6 +82,54 @@ export interface Tool {
 
 export const TOOLS: Tool[] = [
   // ---------------------------------------------------------------- optimize
+  // Problem-phrased pages. Someone typing "make image smaller" has described
+  // a problem, not chosen a tool, so these open on the tool that solves it.
+  {
+    slug: 'reduce-image-size',
+    title: 'Reduce Image Size',
+    h1: 'Reduce your image size',
+    tagline: 'Smaller file',
+    description: 'Reduce the file size of your image in one click.',
+    category: 'optimize',
+    keywords: ['reduce', 'reduce size', 'smaller', 'file size', 'shrink', 'lighter'],
+    aliasOf: 'compress-image',
+    seo: {
+      title: 'Reduce Image Size Online — Free and Instant',
+      description:
+        'Reduce an image file size in one click while keeping it looking sharp. No signup, no upload, works in your browser.',
+    },
+  },
+  {
+    slug: 'make-image-smaller',
+    title: 'Make Image Smaller',
+    h1: 'Make your image smaller',
+    tagline: 'Smaller file',
+    description: 'Make your image file smaller without it looking worse.',
+    category: 'optimize',
+    keywords: ['make smaller', 'smaller', 'shrink', 'reduce', 'too big', 'file size'],
+    aliasOf: 'compress-image',
+    seo: {
+      title: 'Make an Image Smaller — Free Online Tool',
+      description:
+        'Got an image that is too big to send or upload? Make it smaller in one click, without it turning blurry. Free tool.',
+    },
+  },
+  {
+    slug: 'make-jpg-smaller',
+    title: 'Make JPG Smaller',
+    h1: 'Make your JPG smaller',
+    tagline: 'Smaller JPG',
+    description: 'Make your JPG file smaller without it looking worse.',
+    category: 'optimize',
+    keywords: ['jpg', 'jpeg', 'make smaller', 'smaller', 'shrink', 'too big'],
+    sourceLabel: 'JPG',
+    aliasOf: 'compress-image',
+    seo: {
+      title: 'Make a JPG Smaller — Free JPEG Size Reducer',
+      description:
+        'Shrink a JPG that is too large to email or upload. Pick how much to compress and see the saving before downloading.',
+    },
+  },
   {
     slug: 'compress-image',
     title: 'Compress Image',
@@ -535,6 +593,36 @@ export const TOOLS: Tool[] = [
     },
   },
   {
+    slug: 'jpg-to-pdf',
+    title: 'JPG → PDF',
+    h1: 'Convert your JPG to PDF',
+    tagline: 'Create PDF',
+    description: 'Turn your JPG photos into a single PDF document.',
+    category: 'convert',
+    keywords: ['jpg', 'jpeg', 'pdf', 'document', 'convert', 'scan'],
+    sourceLabel: 'JPG',
+    seo: {
+      title: 'JPG to PDF Converter — Combine Photos Free',
+      description:
+        'Turn one or many JPG photos into a single PDF. Pages are sized and centred for you. Free, private, nothing is uploaded.',
+    },
+  },
+  {
+    slug: 'png-to-pdf',
+    title: 'PNG → PDF',
+    h1: 'Convert your PNG to PDF',
+    tagline: 'Create PDF',
+    description: 'Turn your PNG images into a single PDF document.',
+    category: 'convert',
+    keywords: ['png', 'pdf', 'document', 'convert', 'screenshot'],
+    sourceLabel: 'PNG',
+    seo: {
+      title: 'PNG to PDF Converter — Free, No Watermark',
+      description:
+        'Turn PNG images and screenshots into a single tidy PDF. Runs in your browser with no watermark and no signup. Free.',
+    },
+  },
+  {
     slug: 'image-to-pdf',
     title: 'Image → PDF',
     h1: 'Convert images to PDF',
@@ -551,6 +639,29 @@ export const TOOLS: Tool[] = [
   },
 
   // --------------------------------------------------------------- transform
+  {
+    slug: 'change-image-size',
+    title: 'Change Image Size',
+    h1: 'Change your image size',
+    tagline: 'New dimensions',
+    description: 'Change the width and height of your image.',
+    category: 'transform',
+    keywords: [
+      'change size',
+      'change dimensions',
+      'resize',
+      'width',
+      'height',
+      'bigger',
+      'smaller',
+    ],
+    aliasOf: 'resize-image',
+    seo: {
+      title: 'Change Image Size Online — Width and Height',
+      description:
+        'Change the width and height of any image to whatever you need. Keep the proportions locked or set each side yourself.',
+    },
+  },
   {
     slug: 'resize-image',
     title: 'Resize Image',
@@ -883,6 +994,7 @@ export const TOOLS: Tool[] = [
       'Remove the EXIF block your camera wrote into the photo, including any location.',
     category: 'privacy',
     keywords: ['exif', 'remove exif', 'strip exif', 'privacy', 'gps', 'camera data'],
+    aliasOf: 'remove-metadata',
     seo: {
       title: 'Remove EXIF Data From Photos — Free and Private',
       description:
@@ -904,6 +1016,7 @@ export const TOOLS: Tool[] = [
       'privacy',
       'strip',
     ],
+    aliasOf: 'remove-metadata',
     seo: {
       title: 'Remove Image Metadata Online — Free Tool',
       description:
@@ -940,6 +1053,7 @@ export const TOOLS: Tool[] = [
     description: 'Read the EXIF tags your camera wrote into the photo.',
     category: 'privacy',
     keywords: ['exif viewer', 'read exif', 'exif data', 'check exif', 'camera tags'],
+    aliasOf: 'image-metadata-viewer',
     seo: {
       title: 'EXIF Viewer Online — Read Photo EXIF Data Free',
       description:

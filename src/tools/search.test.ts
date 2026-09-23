@@ -45,6 +45,35 @@ describe('searchTools', () => {
     expect(results.indexOf('resize-image')).toBeLessThan(3);
   });
 
+  test('an alias is hidden when the tool it duplicates is already listed', () => {
+    // "Make Image Smaller" and Compress Image are the same room with two
+    // doors; showing both wastes a slot.
+    const results = slugs('smaller');
+    expect(results).toContain('compress-image');
+    expect(results).not.toContain('make-image-smaller');
+    expect(results).not.toContain('reduce-image-size');
+  });
+
+  test('an alias still wins when the query uses its wording', () => {
+    // The canonical tool may not match these words at all, so suppressing the
+    // alias unconditionally would return nothing useful.
+    expect(slugs('make image smaller')).toContain('make-image-smaller');
+  });
+
+  test('an alias resolves to its canonical tool when that also matches', () => {
+    expect(slugs('reduce image size')[0]).toBe('compress-image');
+  });
+
+  test('"change image size" reaches the resize tool', () => {
+    expect(slugs('change image size')[0]).toBe('resize-image');
+  });
+
+  test('"exif" finds the viewer and the removal tool', () => {
+    const results = slugs('exif');
+    expect(results).toContain('exif-viewer');
+    expect(results).toContain('remove-metadata');
+  });
+
   test('"jpg" surfaces the JPG conversion family', () => {
     const results = slugs('jpg');
     expect(results).toContain('jpg-to-png');
