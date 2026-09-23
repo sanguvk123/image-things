@@ -245,3 +245,32 @@ export async function cropImage(
     suffix: 'cropped',
   });
 }
+
+/**
+ * Apply a CSS filter string to the whole image (spec §23–26, §28).
+ *
+ * The caller passes the exact filter used for the on-screen preview, so the
+ * downloaded file is what the user was looking at.
+ */
+export async function applyFilter(
+  image: LoadedImage,
+  filter: string,
+  suffix: string,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const canvas = createCanvas(image.width, image.height);
+  const ctx = context2d(canvas);
+  fillBackgroundIfOpaque(ctx, format);
+
+  ctx.filter = filter;
+  ctx.drawImage(image.bitmap, 0, 0);
+
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+  return toResult(blob, {
+    width: image.width,
+    height: image.height,
+    format,
+    sourceName: image.file.name,
+    suffix,
+  });
+}

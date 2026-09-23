@@ -7,6 +7,13 @@ import { ConvertImage } from './tools/ConvertImage';
 import { RotateImage } from './tools/RotateImage';
 import { FlipImage } from './tools/FlipImage';
 import { CropImage } from './tools/CropImage';
+import {
+  AdjustContrast,
+  AdjustSaturation,
+  BlurImage,
+  BrightenImage,
+} from './tools/AdjustImage';
+import { GrayscaleImage } from './tools/GrayscaleImage';
 
 /**
  * Maps a tool slug to its page component.
@@ -30,6 +37,11 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'rotate-image': RotateImage,
   'flip-image': FlipImage,
   'crop-image': CropImage,
+  'brighten-image': BrightenImage,
+  'adjust-contrast': AdjustContrast,
+  'adjust-saturation': AdjustSaturation,
+  'grayscale-image': GrayscaleImage,
+  'blur-image': BlurImage,
 };
 
 export function ToolRoute() {

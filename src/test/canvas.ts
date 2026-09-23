@@ -20,6 +20,8 @@ export interface CanvasStub {
     width: number;
     height: number;
   }[];
+  /** Filter strings assigned to the 2D context, in order. */
+  filtersUsed: string[];
   restore: () => void;
 }
 
@@ -41,6 +43,7 @@ export function installCanvasStubs(
   const stub: CanvasStub = {
     encodedSize: options.encodedSize ?? 120_000,
     encodeCalls: [],
+    filtersUsed: [],
     restore: () => {},
   };
 
@@ -63,8 +66,16 @@ export function installCanvasStubs(
       canvas: this,
       imageSmoothingEnabled: true,
       imageSmoothingQuality: 'high',
-      filter: 'none',
       fillStyle: '#000000',
+      // Record filters so tests can assert the saved image matches the preview.
+      _filter: 'none',
+      get filter() {
+        return this._filter;
+      },
+      set filter(value: string) {
+        this._filter = value;
+        stub.filtersUsed.push(value);
+      },
       globalCompositeOperation: 'source-over',
       save: vi.fn(),
       restore: vi.fn(),
