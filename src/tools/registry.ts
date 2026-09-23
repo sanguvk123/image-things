@@ -59,6 +59,11 @@ export interface Tool {
   sourceLabel?: string;
   /** Preselected compression preset, for intent-specific landing pages. */
   defaultCompression?: CompressionPreset;
+  /**
+   * Exact output dimensions a page is built for, e.g. /resize-image-to-1080x1080.
+   * The tool opens with these already filled in.
+   */
+  presetSize?: { width: number; height: number };
   /** Format conversion pair, set only for conversion tools. */
   convert?: { fromLabel: string; to: OutputFormat };
   /** Search-result copy. Required: see the SEO rule above. */
@@ -462,6 +467,140 @@ export const TOOLS: Tool[] = [
       title: 'Resize Image Online — Exact Width and Height',
       description:
         'Resize any photo to the exact pixel dimensions you need. Aspect ratio is locked by default so nothing looks stretched. Free tool.',
+    },
+  },
+  {
+    slug: 'resize-jpg',
+    title: 'Resize JPG',
+    h1: 'Resize your JPG',
+    tagline: 'Change JPG dimensions',
+    description: 'Resize your JPG to exactly the dimensions you need.',
+    category: 'transform',
+    keywords: ['jpg', 'jpeg', 'resize', 'dimensions', 'width', 'height', 'pixels'],
+    sourceLabel: 'JPG',
+    seo: {
+      title: 'Resize JPG Online — Exact Width and Height',
+      description:
+        'Resize JPG photos to the exact pixel size you need. Aspect ratio stays locked so nothing looks stretched. Free, no signup.',
+    },
+  },
+  {
+    slug: 'resize-png',
+    title: 'Resize PNG',
+    h1: 'Resize your PNG',
+    tagline: 'Change PNG dimensions',
+    description: 'Resize your PNG to exactly the dimensions you need.',
+    category: 'transform',
+    keywords: ['png', 'resize', 'dimensions', 'width', 'height', 'pixels', 'logo'],
+    sourceLabel: 'PNG',
+    seo: {
+      title: 'Resize PNG Online — Keep Transparency Intact',
+      description:
+        'Resize PNG images to any pixel size with transparency preserved. Ideal for logos, icons and screenshots. Free and private.',
+    },
+  },
+  {
+    slug: 'resize-image-by-pixels',
+    title: 'Resize by Pixels',
+    h1: 'Resize your image by pixels',
+    tagline: 'Exact pixel control',
+    description: 'Set the exact pixel width and height you need.',
+    category: 'transform',
+    keywords: ['pixels', 'px', 'exact', 'dimensions', 'width', 'height', 'resize'],
+    seo: {
+      title: 'Resize Image by Pixels — Exact Pixel Dimensions',
+      description:
+        'Type an exact pixel width and height and get precisely that. Lock the ratio or set both sides independently. Free tool.',
+    },
+  },
+  {
+    slug: 'resize-image-to-1080x1080',
+    title: 'Resize to 1080×1080',
+    h1: 'Resize your image to 1080 × 1080',
+    tagline: 'Square, 1080px',
+    description: 'Resize your image to a 1080 × 1080 square.',
+    category: 'transform',
+    keywords: ['1080x1080', 'square', 'instagram', 'post', 'social', 'resize'],
+    presetSize: { width: 1080, height: 1080 },
+    seo: {
+      title: 'Resize Image to 1080x1080 — Square Post Size',
+      description:
+        'Make any photo a perfect 1080 by 1080 square, the standard size for social posts. Opens ready to go. Free, no signup.',
+    },
+  },
+  {
+    slug: 'resize-image-to-1920x1080',
+    title: 'Resize to 1920×1080',
+    h1: 'Resize your image to 1920 × 1080',
+    tagline: 'Full HD',
+    description: 'Resize your image to 1920 × 1080, full HD.',
+    category: 'transform',
+    keywords: ['1920x1080', 'full hd', '1080p', 'wallpaper', 'desktop', 'resize'],
+    presetSize: { width: 1920, height: 1080 },
+    seo: {
+      title: 'Resize Image to 1920x1080 — Full HD Size',
+      description:
+        'Resize any picture to 1920 by 1080, the standard full HD size for wallpapers, slides and video backgrounds. Free tool.',
+    },
+  },
+  {
+    slug: 'resize-image-to-1280x720',
+    title: 'Resize to 1280×720',
+    h1: 'Resize your image to 1280 × 720',
+    tagline: 'HD 720p',
+    description: 'Resize your image to 1280 × 720, HD.',
+    category: 'transform',
+    keywords: ['1280x720', '720p', 'hd', 'thumbnail', 'youtube', 'resize'],
+    presetSize: { width: 1280, height: 720 },
+    seo: {
+      title: 'Resize Image to 1280x720 — HD 720p Size',
+      description:
+        'Resize your image to 1280 by 720, the usual size for video thumbnails and HD slides. Opens preset and ready. Free.',
+    },
+  },
+  {
+    slug: 'resize-image-to-1200x630',
+    title: 'Resize to 1200×630',
+    h1: 'Resize your image to 1200 × 630',
+    tagline: 'Link preview',
+    description: 'Resize your image to 1200 × 630 for link previews.',
+    category: 'transform',
+    keywords: ['1200x630', 'og image', 'open graph', 'link preview', 'share', 'resize'],
+    presetSize: { width: 1200, height: 630 },
+    seo: {
+      title: 'Resize Image to 1200x630 — Social Preview Size',
+      description:
+        'Resize your image to 1200 by 630, the size used for link previews on social media and messaging apps. Free and instant.',
+    },
+  },
+  {
+    slug: 'resize-image-to-512x512',
+    title: 'Resize to 512×512',
+    h1: 'Resize your image to 512 × 512',
+    tagline: 'Icon size',
+    description: 'Resize your image to a 512 × 512 square.',
+    category: 'transform',
+    keywords: ['512x512', 'icon', 'app icon', 'avatar', 'square', 'resize'],
+    presetSize: { width: 512, height: 512 },
+    seo: {
+      title: 'Resize Image to 512x512 — App Icon Size',
+      description:
+        'Resize any image to 512 by 512 pixels, the standard square for app icons and avatars. Opens ready to use. Free tool.',
+    },
+  },
+  {
+    slug: 'resize-image-to-800x800',
+    title: 'Resize to 800×800',
+    h1: 'Resize your image to 800 × 800',
+    tagline: 'Square, 800px',
+    description: 'Resize your image to an 800 × 800 square.',
+    category: 'transform',
+    keywords: ['800x800', 'square', 'product', 'listing', 'shop', 'resize'],
+    presetSize: { width: 800, height: 800 },
+    seo: {
+      title: 'Resize Image to 800x800 — Square Product Size',
+      description:
+        'Resize your photo to 800 by 800 pixels, a common square for product listings and shop images. Free, runs in browser.',
     },
   },
   {

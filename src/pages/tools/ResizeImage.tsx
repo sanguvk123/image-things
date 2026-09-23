@@ -9,22 +9,29 @@ import type { Tool } from '@/tools/registry';
 const QUICK_SIZES = [
   { width: 1080, height: 1080 },
   { width: 1920, height: 1080 },
+  { width: 1280, height: 720 },
   { width: 1200, height: 630 },
+  { width: 800, height: 800 },
+  { width: 512, height: 512 },
 ];
 
 export function ResizeImage({ tool }: { tool: Tool }) {
   const { image, result, busy, error, selectFile, run, reset } = useImageTool();
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-  const [keepRatio, setKeepRatio] = useState(true);
+  const preset = tool.presetSize;
+  const [width, setWidth] = useState(preset?.width ?? 0);
+  const [height, setHeight] = useState(preset?.height ?? 0);
+  // A page promising exact dimensions must not silently adjust them to
+  // preserve the source ratio, so the lock starts off there.
+  const [keepRatio, setKeepRatio] = useState(!preset);
 
   // Start from the image's own dimensions: the common case is a small tweak,
-  // not typing two numbers from scratch.
+  // not typing two numbers from scratch. Pages built for one exact size
+  // (e.g. /resize-image-to-1080x1080) keep the size they promised instead.
   useEffect(() => {
-    if (!image) return;
+    if (!image || preset) return;
     setWidth(image.width);
     setHeight(image.height);
-  }, [image]);
+  }, [image, preset]);
 
   function changeWidth(value: number) {
     if (!image || !keepRatio) {
@@ -94,7 +101,7 @@ export function ResizeImage({ tool }: { tool: Tool }) {
         disabled={!valid}
         onClick={() => run((img) => resizeImage(img, width, height))}
       >
-        Resize Image
+        {preset ? `Resize to ${preset.width} × ${preset.height}` : 'Resize Image'}
       </ActionButton>
     </ToolLayout>
   );
