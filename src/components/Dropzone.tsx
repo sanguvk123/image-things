@@ -1,5 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 
+/** Extensions to trust when the browser reports no MIME type at all. */
+const IMAGE_EXTENSIONS =
+  /\.(jpe?g|png|gif|bmp|webp|avif|heic|heif|tiff?)$/i;
+
+/**
+ * Whether a dropped or pasted file looks like an image.
+ *
+ * file.type alone is not enough: browsers frequently report an empty type for
+ * HEIC and TIFF, so filtering on it would silently reject the exact files the
+ * HEIC and TIFF tools exist to handle.
+ */
+function looksLikeImage(file: File): boolean {
+  if (file.type.startsWith('image/')) return true;
+  return file.type === '' && IMAGE_EXTENSIONS.test(file.name);
+}
+
 interface DropzoneProps {
   onFiles: (files: File[]) => void;
   /** Formats line under the button, e.g. "JPG • PNG • WebP • HEIC". */
@@ -15,7 +31,7 @@ interface DropzoneProps {
  */
 export function Dropzone({
   onFiles,
-  hint = 'JPG • PNG • WebP • HEIC',
+  hint = 'JPG • PNG • WebP • HEIC • TIFF',
   multiple = false,
 }: DropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -26,8 +42,8 @@ export function Dropzone({
 
   useEffect(() => {
     function onPaste(event: ClipboardEvent) {
-      const files = Array.from(event.clipboardData?.files ?? []).filter((file) =>
-        file.type.startsWith('image/'),
+      const files = Array.from(event.clipboardData?.files ?? []).filter(
+        looksLikeImage,
       );
       if (files.length === 0) return;
       event.preventDefault();
@@ -43,9 +59,7 @@ export function Dropzone({
     dragDepth.current = 0;
     setIsDragging(false);
 
-    const files = Array.from(event.dataTransfer.files).filter((file) =>
-      file.type.startsWith('image/'),
-    );
+    const files = Array.from(event.dataTransfer.files).filter(looksLikeImage);
     if (files.length > 0) onFiles(multiple ? files : files.slice(0, 1));
   }
 
@@ -86,7 +100,7 @@ export function Dropzone({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,.heic,.heif,.tif,.tiff"
         multiple={multiple}
         aria-label={multiple ? 'Choose images' : 'Choose image'}
         className="hidden"

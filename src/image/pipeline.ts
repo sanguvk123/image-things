@@ -1,5 +1,6 @@
 import type { OutputFormat } from '@/tools/registry';
 import { outputFileName } from './format';
+import { decodeSpecialFormat } from './decode';
 
 /**
  * The image processing core.
@@ -37,6 +38,7 @@ export const ACCEPTED_TYPES = [
   'image/avif',
   'image/heic',
   'image/heif',
+  'image/tiff',
 ] as const;
 
 export class UnsupportedImageError extends Error {
@@ -48,12 +50,25 @@ export class UnsupportedImageError extends Error {
 
 /** Decode a user-selected file into pixels we can draw. */
 export async function loadImage(file: File): Promise<LoadedImage> {
-  let bitmap: ImageBitmap;
+  let bitmap: ImageBitmap | null = null;
+  let decodedOurselves = false;
+
+  // HEIC and TIFF are decoded by us; everything else by the browser.
   try {
-    bitmap = await createImageBitmap(file);
+    bitmap = await decodeSpecialFormat(file);
+    decodedOurselves = bitmap !== null;
   } catch {
-    // Browsers reject formats they cannot decode (notably HEIC outside Safari).
-    throw new UnsupportedImageError();
+    throw new UnsupportedImageError(
+      "We couldn't read that image. It may be damaged or use an unusual variant.",
+    );
+  }
+
+  if (!bitmap) {
+    try {
+      bitmap = await createImageBitmap(file);
+    } catch {
+      throw new UnsupportedImageError();
+    }
   }
 
   return {
@@ -61,8 +76,23 @@ export async function loadImage(file: File): Promise<LoadedImage> {
     bitmap,
     width: bitmap.width,
     height: bitmap.height,
-    previewUrl: URL.createObjectURL(file),
+    // A browser that cannot decode the file cannot display it either, so the
+    // preview has to come from the pixels we decoded, not the original file.
+    previewUrl: decodedOurselves
+      ? await previewUrlFromBitmap(bitmap)
+      : URL.createObjectURL(file),
   };
+}
+
+/** Renders decoded pixels to a PNG object URL so they can be previewed. */
+async function previewUrlFromBitmap(bitmap: ImageBitmap): Promise<string> {
+  const canvas = createCanvas(bitmap.width, bitmap.height);
+  context2d(canvas).drawImage(bitmap, 0, 0);
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, 'image/png'),
+  );
+  if (!blob) throw new UnsupportedImageError();
+  return URL.createObjectURL(blob);
 }
 
 /** Release the memory held by a loaded image. */

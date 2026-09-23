@@ -65,6 +65,31 @@ describe('drag and drop', () => {
 
     expect(screen.getByText('Drop image here')).toBeInTheDocument();
   });
+
+  test.each([
+    ['photo.heic', 'HEIC'],
+    ['scan.tiff', 'TIFF'],
+  ])('accepts %s even when the browser reports no MIME type', async (name) => {
+    // Browsers often report an empty type for HEIC and TIFF. Filtering on
+    // file.type alone would reject the exact files these tools exist for.
+    renderTool('compress-image');
+
+    fireEvent.drop(dropzone(), {
+      dataTransfer: transferWith([fakeImageFile(name, 2_000_000, '')]),
+    });
+
+    expect(await screen.findByText(name)).toBeInTheDocument();
+  });
+
+  test('a typeless file that is not an image is still ignored', () => {
+    renderTool('compress-image');
+
+    fireEvent.drop(dropzone(), {
+      dataTransfer: transferWith([new File(['data'], 'archive.zip', { type: '' })]),
+    });
+
+    expect(screen.getByText('Drop image here')).toBeInTheDocument();
+  });
 });
 
 describe('clipboard paste', () => {
@@ -119,6 +144,8 @@ describe('file picker', () => {
   test('lists the formats that are accepted', () => {
     renderTool('compress-image');
 
-    expect(screen.getByText('JPG • PNG • WebP • HEIC')).toBeInTheDocument();
+    // TIFF is advertised now that we decode it ourselves; promising a format
+    // we cannot open would be worse than not listing it.
+    expect(screen.getByText('JPG • PNG • WebP • HEIC • TIFF')).toBeInTheDocument();
   });
 });
