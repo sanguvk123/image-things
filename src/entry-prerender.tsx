@@ -9,11 +9,15 @@ import { renderToString } from 'react-dom/server';
 // react-router v7 dropped the /server subpath; StaticRouter ships from the core.
 import { StaticRouter } from 'react-router';
 import { AppRoutes } from './App';
+import { EAGER_PAGES } from './pages/pages.eager';
 
 export function renderPath(path: string): string {
   return renderToString(
+    // Eager pages: React.lazy suspends on first render, and renderToString
+    // would emit the fallback instead of the page -- turning every
+    // prerendered landing page back into an empty shell.
     <StaticRouter location={path}>
-      <AppRoutes />
+      <AppRoutes pages={EAGER_PAGES} />
     </StaticRouter>,
   );
 }

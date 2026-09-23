@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "lastmod": "node scripts/lastmod.mjs",
+    "verify:prerender": "node scripts/verify-prerender.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build && npm run build:prerender",
-    "build:prerender": "vite build --ssr src/entry-prerender.tsx --outDir dist-prerender && node scripts/prerender.mjs",
+    "build:prerender": "vite build --ssr src/entry-prerender.tsx --outDir dist-prerender && node scripts/prerender.mjs && npm run verify:prerender",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

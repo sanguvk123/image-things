@@ -1,115 +1,56 @@
+import { Suspense } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getTool, type Tool } from '@/tools/registry';
+import { getTool, headingFor, type Tool } from '@/tools/registry';
 import { toolMeta } from '@/tools/seo';
 import { DocumentHead } from '@/components/DocumentHead';
-import { CompressImage } from './tools/CompressImage';
-import { CompressToSize } from './tools/CompressToSize';
-import { ResizeImage } from './tools/ResizeImage';
-import { ConvertImage } from './tools/ConvertImage';
-import { RotateImage } from './tools/RotateImage';
-import { FlipImage } from './tools/FlipImage';
-import { CropImage } from './tools/CropImage';
-import {
-  AdjustContrast,
-  AdjustSaturation,
-  BlurImage,
-  BrightenImage,
-  DarkenImage,
-  IncreaseContrast,
-} from './tools/AdjustImage';
-import { GrayscaleImage } from './tools/GrayscaleImage';
-import { SharpenImage } from './tools/SharpenImage';
-import { RemoveMetadata } from './tools/RemoveMetadata';
-import { ViewMetadata } from './tools/ViewMetadata';
-import { ImageToPdf } from './tools/ImageToPdf';
-import { UpscaleImage } from './tools/UpscaleImage';
-import { RemoveBackground } from './tools/RemoveBackground';
+import type { PageMap } from './pageMap';
+import { LAZY_PAGES } from './pages';
 
-/**
- * Maps a tool slug to its page component.
- *
- * Tools are implemented one slice at a time; anything not listed here still
- * routes and renders an honest placeholder rather than a 404.
- */
-const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
-  'compress-image': CompressImage,
-  // Problem-phrased URLs resolve to the tool that actually solves them.
-  'reduce-image-size': CompressImage,
-  'make-image-smaller': CompressImage,
-  'make-jpg-smaller': CompressImage,
-  'compress-jpg': CompressImage,
-  'compress-png': CompressImage,
-  'compress-webp': CompressImage,
-  'compress-image-without-losing-quality': CompressImage,
-  'compress-image-to-size': CompressToSize,
-  'compress-image-to-50kb': CompressToSize,
-  'compress-image-to-100kb': CompressToSize,
-  'compress-image-to-200kb': CompressToSize,
-  'compress-image-to-300kb': CompressToSize,
-  'compress-image-to-500kb': CompressToSize,
-  'compress-image-to-1mb': CompressToSize,
-  'compress-jpg-to-100kb': CompressToSize,
-  'compress-jpg-to-200kb': CompressToSize,
-  'compress-jpg-to-500kb': CompressToSize,
-  'compress-png-to-100kb': CompressToSize,
-  'resize-image': ResizeImage,
-  'change-image-size': ResizeImage,
-  'resize-jpg': ResizeImage,
-  'resize-png': ResizeImage,
-  'resize-image-by-pixels': ResizeImage,
-  'resize-image-to-1080x1080': ResizeImage,
-  'resize-image-to-1920x1080': ResizeImage,
-  'resize-image-to-1280x720': ResizeImage,
-  'resize-image-to-1200x630': ResizeImage,
-  'resize-image-to-512x512': ResizeImage,
-  'resize-image-to-800x800': ResizeImage,
-  'jpg-to-png': ConvertImage,
-  'png-to-jpg': ConvertImage,
-  'webp-to-jpg': ConvertImage,
-  'webp-to-png': ConvertImage,
-  'jpg-to-webp': ConvertImage,
-  'png-to-webp': ConvertImage,
-  'heic-to-jpg': ConvertImage,
-  'heic-to-png': ConvertImage,
-  'avif-to-jpg': ConvertImage,
-  'avif-to-png': ConvertImage,
-  'bmp-to-jpg': ConvertImage,
-  'tiff-to-jpg': ConvertImage,
-  'rotate-image': RotateImage,
-  'flip-image': FlipImage,
-  'crop-image': CropImage,
-  'brighten-image': BrightenImage,
-  'darken-image': DarkenImage,
-  'adjust-contrast': AdjustContrast,
-  'increase-contrast': IncreaseContrast,
-  'adjust-saturation': AdjustSaturation,
-  'grayscale-image': GrayscaleImage,
-  'blur-image': BlurImage,
-  'sharpen-image': SharpenImage,
-  'remove-metadata': RemoveMetadata,
-  'remove-exif': RemoveMetadata,
-  'remove-image-metadata': RemoveMetadata,
-  'image-metadata-viewer': ViewMetadata,
-  'exif-viewer': ViewMetadata,
-  'image-to-pdf': ImageToPdf,
-  'jpg-to-pdf': ImageToPdf,
-  'png-to-pdf': ImageToPdf,
-  'upscale-image': UpscaleImage,
-  'remove-background': RemoveBackground,
-};
-
-export function ToolRoute() {
+export function ToolRoute({ pages = LAZY_PAGES }: { pages?: PageMap }) {
   const { slug = '' } = useParams();
   const tool = getTool(slug);
 
   if (!tool) return <NotFound />;
 
-  const Page = PAGES[tool.slug];
+  const Page = pages[tool.slug];
   return (
     <>
       <DocumentHead {...toolMeta(tool)} />
-      {Page ? <Page tool={tool} /> : <ComingSoon tool={tool} />}
+      {/*
+        The prerendered HTML is already in the DOM, so the fallback is only
+        ever seen on a client-side navigation between tools -- and it is
+        deliberately blank rather than a spinner, which would flash for the
+        few milliseconds a chunk takes to arrive on a warm connection.
+      */}
+      {Page ? (
+        <Suspense fallback={<ToolSkeleton tool={tool} />}>
+          <Page tool={tool} />
+        </Suspense>
+      ) : (
+        <ComingSoon tool={tool} />
+      )}
     </>
+  );
+}
+
+/**
+ * Holds the page's shape while its chunk loads.
+ *
+ * Shows the real heading immediately, because that is known from the registry
+ * without loading anything -- so a navigation never looks like a blank page.
+ */
+function ToolSkeleton({ tool }: { tool: Tool }) {
+  return (
+    <div className="mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6">
+      <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
+        {headingFor(tool)}
+      </h1>
+      <p className="mt-2 text-[15px] text-ink-soft">{tool.description}</p>
+      <div
+        className="mt-6 h-64 animate-pulse rounded-2xl bg-line/40"
+        aria-hidden="true"
+      />
+    </div>
   );
 }
 

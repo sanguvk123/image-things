@@ -1,6 +1,7 @@
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { ToolRoute } from '@/pages/ToolRoute';
+import type { PageMap } from '@/pages/pageMap';
 
 /**
  * Everything inside the router.
@@ -9,14 +10,16 @@ import { ToolRoute } from '@/pages/ToolRoute';
  * under a StaticRouter. The browser and the build therefore render the same
  * markup and cannot drift apart.
  */
-export function AppRoutes() {
+export function AppRoutes({ pages }: { pages?: PageMap }) {
   return (
     <>
       <SiteHeader />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/:slug" element={<ToolRoute />} />
+          {/* `pages` is only passed by the prerender, which needs eagerly
+              imported components because it cannot wait on Suspense. */}
+          <Route path="/:slug" element={<ToolRoute pages={pages} />} />
         </Routes>
       </main>
       <SiteFooter />
