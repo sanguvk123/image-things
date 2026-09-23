@@ -2,9 +2,16 @@ import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { ToolRoute } from '@/pages/ToolRoute';
 
-export function App() {
+/**
+ * Everything inside the router.
+ *
+ * Kept separate from <App> so the prerender step can mount the same tree
+ * under a StaticRouter. The browser and the build therefore render the same
+ * markup and cannot drift apart.
+ */
+export function AppRoutes() {
   return (
-    <BrowserRouter>
+    <>
       <SiteHeader />
       <main>
         <Routes>
@@ -12,6 +19,14 @@ export function App() {
           <Route path="/:slug" element={<ToolRoute />} />
         </Routes>
       </main>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
