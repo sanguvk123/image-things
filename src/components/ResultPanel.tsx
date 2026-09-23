@@ -34,17 +34,13 @@ export function ResultPanel({
       </div>
 
       <div className="mt-5 text-center">
-        {hideSavings ? (
-          <p className="tabular text-lg text-ink">
-            {result.width} × {result.height} · {formatBytes(result.blob.size)}
-          </p>
-        ) : (
-          <p className="tabular text-lg text-ink">
-            {formatBytes(originalBytes)}{' '}
-            <span className="text-ink-faint">→</span>{' '}
-            <span className="font-medium">{formatBytes(result.blob.size)}</span>
-          </p>
-        )}
+        {/* One string per line so the summary reads as a sentence, not as
+            disconnected fragments, to both users and assistive tech. */}
+        <p className="tabular text-lg text-ink">
+          {hideSavings
+            ? `${result.width} × ${result.height} · ${formatBytes(result.blob.size)}`
+            : `${formatBytes(originalBytes)} → ${formatBytes(result.blob.size)}`}
+        </p>
 
         {note ? (
           <p className="mt-1.5 text-sm text-good">{note}</p>

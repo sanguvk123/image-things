@@ -59,6 +59,7 @@ export function OptionCards<T extends string>({
       <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
         {options.map((option) => {
           const selected = option.value === value;
+          const descriptionId = `${legend}-${option.value}-description`;
           return (
             <label
               key={option.value}
@@ -72,12 +73,17 @@ export function OptionCards<T extends string>({
                 value={option.value}
                 checked={selected}
                 onChange={() => onChange(option.value)}
+                // The description is referenced rather than nested so each
+                // option's accessible name stays exactly its label. Otherwise
+                // "Smaller" and "…smaller file" become indistinguishable.
+                aria-label={option.label}
+                aria-describedby={option.description ? descriptionId : undefined}
                 className="mt-1 accent-[#0a84ff]"
               />
               <span>
                 <span className="block text-[15px] text-ink">{option.label}</span>
                 {option.description && (
-                  <span className="block text-sm text-ink-faint">
+                  <span id={descriptionId} className="block text-sm text-ink-faint">
                     {option.description}
                   </span>
                 )}

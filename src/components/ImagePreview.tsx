@@ -15,6 +15,15 @@ interface ImagePreviewProps {
  */
 export function ImagePreview({ image, onRemove, overlayUrl }: ImagePreviewProps) {
   const label = badgeFor(image.file.type);
+  // Built as one string so it reads as a single line to screen readers
+  // instead of a stream of disconnected fragments.
+  const meta = [
+    formatBytes(image.file.size),
+    `${image.width} × ${image.height}`,
+    label,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <div>
@@ -29,10 +38,7 @@ export function ImagePreview({ image, onRemove, overlayUrl }: ImagePreviewProps)
       <div className="mt-3 flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="truncate text-[15px] text-ink">{image.file.name}</p>
-          <p className="tabular mt-0.5 text-sm text-ink-faint">
-            {formatBytes(image.file.size)} · {image.width} × {image.height}
-            {label ? ` · ${label}` : ''}
-          </p>
+          <p className="tabular mt-0.5 text-sm text-ink-faint">{meta}</p>
         </div>
 
         <button
