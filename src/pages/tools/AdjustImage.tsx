@@ -16,6 +16,14 @@ interface AdjustConfig {
   actionLabel: string;
   /** Filename suffix, e.g. photo-brightened.jpg */
   suffix: string;
+  /**
+   * Where the slider starts.
+   *
+   * Directional pages need this: someone on /darken-image has already said
+   * which way they want to go, so opening at 0 (no change) would make them
+   * state their intent twice. Defaults to 0 for neutral pages.
+   */
+  defaultAmount?: number;
 }
 
 /**
@@ -33,12 +41,13 @@ export function AdjustImage({
 }) {
   const { image, result, busy, error, selectFile, run, reset } = useImageTool();
   const range = ADJUSTMENT_RANGE[config.kind as keyof typeof ADJUSTMENT_RANGE];
-  const [amount, setAmount] = useState(0);
+  const initialAmount = config.defaultAmount ?? 0;
+  const [amount, setAmount] = useState(initialAmount);
 
   const filter = filterFor(config.kind, amount);
 
   function startOver() {
-    setAmount(0);
+    setAmount(initialAmount);
     reset();
   }
 
@@ -89,6 +98,25 @@ export function BrightenImage({ tool }: { tool: Tool }) {
   );
 }
 
+/**
+ * The opposite intent to Brighten, so it opens already darkened. The slider
+ * still spans the full range if the user overshoots.
+ */
+export function DarkenImage({ tool }: { tool: Tool }) {
+  return (
+    <AdjustImage
+      tool={tool}
+      config={{
+        kind: 'brightness',
+        sliderLabel: 'Brightness',
+        actionLabel: 'Darken',
+        suffix: 'darkened',
+        defaultAmount: -25,
+      }}
+    />
+  );
+}
+
 export function AdjustContrast({ tool }: { tool: Tool }) {
   return (
     <AdjustImage
@@ -98,6 +126,21 @@ export function AdjustContrast({ tool }: { tool: Tool }) {
         sliderLabel: 'Contrast',
         actionLabel: 'Apply',
         suffix: 'contrast',
+      }}
+    />
+  );
+}
+
+export function IncreaseContrast({ tool }: { tool: Tool }) {
+  return (
+    <AdjustImage
+      tool={tool}
+      config={{
+        kind: 'contrast',
+        sliderLabel: 'Contrast',
+        actionLabel: 'Increase Contrast',
+        suffix: 'contrast',
+        defaultAmount: 25,
       }}
     />
   );

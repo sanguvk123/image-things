@@ -14,6 +14,8 @@ import {
   AdjustSaturation,
   BlurImage,
   BrightenImage,
+  DarkenImage,
+  IncreaseContrast,
 } from './tools/AdjustImage';
 import { GrayscaleImage } from './tools/GrayscaleImage';
 import { SharpenImage } from './tools/SharpenImage';
@@ -71,7 +73,9 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'flip-image': FlipImage,
   'crop-image': CropImage,
   'brighten-image': BrightenImage,
+  'darken-image': DarkenImage,
   'adjust-contrast': AdjustContrast,
+  'increase-contrast': IncreaseContrast,
   'adjust-saturation': AdjustSaturation,
   'grayscale-image': GrayscaleImage,
   'blur-image': BlurImage,

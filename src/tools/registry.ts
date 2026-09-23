@@ -779,6 +779,34 @@ export const TOOLS: Tool[] = [
     },
   },
   {
+    slug: 'darken-image',
+    title: 'Darken Image',
+    h1: 'Darken your image',
+    tagline: 'Reduce brightness',
+    description: 'Make your image darker, with a live preview as you adjust.',
+    category: 'adjust',
+    keywords: ['darken', 'darker', 'too bright', 'overexposed', 'dim', 'reduce light'],
+    seo: {
+      title: 'Darken Image Online — Fix Overexposed Photos',
+      description:
+        'Make a too-bright photo darker with a live preview as you drag. Opens already darkened so you can fine tune. Free tool.',
+    },
+  },
+  {
+    slug: 'increase-contrast',
+    title: 'Increase Contrast',
+    h1: 'Increase your image contrast',
+    tagline: 'Add punch',
+    description: 'Give a flat image more punch, with a live preview.',
+    category: 'adjust',
+    keywords: ['increase contrast', 'more contrast', 'flat', 'dull', 'punch', 'pop'],
+    seo: {
+      title: 'Increase Image Contrast Online — Free Tool',
+      description:
+        'Add punch to a flat, dull photo by increasing contrast. Live preview as you drag, so you see it before you save it.',
+    },
+  },
+  {
     slug: 'adjust-contrast',
     title: 'Adjust Contrast',
     tagline: 'Add punch',
