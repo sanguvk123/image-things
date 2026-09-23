@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { PRIVACY_LINE } from '@/components/controls';
 import { ToolSearch } from '@/components/ToolSearch';
 import { DocumentHead } from '@/components/DocumentHead';
 import { ToolIcon, categoryStyle } from '@/components/ToolIcon';
@@ -38,7 +39,7 @@ export function Home() {
           <ToolSearch />
         </div>
 
-        <p className="mt-3 text-[13px] text-ink-faint">Private • Secure • No signup</p>
+        <p className="mt-3 text-[13px] text-ink-faint">{PRIVACY_LINE}</p>
       </section>
 
       <section aria-labelledby="popular-tools" className="pb-10">

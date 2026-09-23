@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from './App';
 import { CATEGORY_LABELS, TOOLS } from '@/tools/registry';
+import { PRIVACY_LINE } from '@/components/controls';
 
 // BrowserRouter reads jsdom's shared history, so a test that navigates would
 // otherwise leak its URL into the next test.
@@ -72,7 +73,20 @@ describe('homepage', () => {
 
   test('reassures the user about privacy without requiring signup', () => {
     render(<App />);
-    expect(screen.getByText(/private • secure • no signup/i)).toBeInTheDocument();
+
+    // The line itself contains the no-signup promise; asserting that phrase
+    // separately also matches the footer.
+    expect(screen.getByText(PRIVACY_LINE)).toBeInTheDocument();
+  });
+
+  test('states the concrete privacy claim rather than a vague one', () => {
+    render(<App />);
+
+    // "Secure" is a word every site uses and none can be held to. What is
+    // actually true here -- and is the differentiator -- is that the image
+    // never leaves the device, so say that instead.
+    expect(screen.getByText(/runs in your browser/i)).toBeInTheDocument();
+    expect(screen.queryByText(/\bSecure\b/)).not.toBeInTheDocument();
   });
 });
 

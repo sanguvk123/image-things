@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
 import { ImagePreview } from '@/components/ImagePreview';
 import { ToolContent } from '@/components/ToolContent';
-import { ErrorNote } from '@/components/controls';
+import { ErrorNote, PRIVACY_LINE } from '@/components/controls';
 import { useImageTool } from '@/image/useImageTool';
 import { readMetadata, type MetadataEntry } from '@/image/metadata';
 import { headingFor, type Tool } from '@/tools/registry';
@@ -66,9 +66,7 @@ export function ViewMetadata({ tool }: { tool: Tool }) {
           <div className="space-y-4">
             <Dropzone onFiles={(files) => files[0] && selectFile(files[0])} />
             {error && <ErrorNote>{error}</ErrorNote>}
-            <p className="text-center text-xs text-ink-faint">
-              Private • Secure • No signup
-            </p>
+            <p className="text-center text-xs text-ink-faint">{PRIVACY_LINE}</p>
           </div>
         )}
       </div>

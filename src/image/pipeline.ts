@@ -6,8 +6,8 @@ import { decodeSpecialFormat } from './decode';
  * The image processing core.
  *
  * Everything runs in the browser on a canvas — nothing is uploaded. That is
- * both the privacy promise ("Private • Secure • No signup") and the reason the
- * tools feel instant: there is no network round trip.
+ * both the privacy promise (PRIVACY_LINE in components/controls) and the
+ * reason the tools feel instant: there is no network round trip.
  */
 
 export interface LoadedImage {

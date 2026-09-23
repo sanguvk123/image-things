@@ -188,6 +188,20 @@ export function Slider({
   );
 }
 
+/**
+ * The one-line reassurance shown under every upload control.
+ *
+ * "Secure" used to sit in the middle of this line. It is the kind of word
+ * every site claims and none can be held to, and it was doing the weakest
+ * work in a sentence whose other two parts are literally verifiable. What is
+ * actually distinctive here is that the file never leaves the device, so the
+ * line says that instead.
+ *
+ * Exported because the same string appeared in four files and had to stay
+ * identical in all of them.
+ */
+export const PRIVACY_LINE = 'Private • Runs in your browser • No signup';
+
 export function ErrorNote({ children }: { children: ReactNode }) {
   return (
     <p role="alert" className="text-sm text-[#c0392b]">

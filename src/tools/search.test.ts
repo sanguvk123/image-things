@@ -108,6 +108,35 @@ describe('searchTools', () => {
     );
   });
 
+  // The search box is how someone who did not arrive from Google finds a
+  // tool. These are the phrasings people actually type, rather than the
+  // keyword-shaped queries the registry was written against.
+  describe('everyday phrasing', () => {
+    test('a filler word does not eliminate the right answer', () => {
+      // Regression: every term had to match something, so the "to" in
+      // "jpg to png" -- a word no tool has a keyword for -- ruled out the
+      // JPG -> PNG page and left Image -> PDF as the top result.
+      expect(searchTools('jpg to png', 1)[0]?.slug).toBe('jpg-to-png');
+    });
+
+    test.each([
+      ['photo under 100kb', 'compress-image-to-100kb'],
+      ['make background transparent', 'remove-background'],
+      ['remove image info', 'remove-metadata'],
+      ['make photo square', 'crop-image'],
+      // Not resize-image: the square preset is the better answer, and the
+      // registry already knows 1080x1080 is the Instagram size.
+      ['instagram image', 'resize-image-to-1080x1080'],
+    ])('%s finds %s', (query, slug) => {
+      expect(searchTools(query, 3).map((tool) => tool.slug)).toContain(slug);
+    });
+
+    test('filler words alone match nothing rather than everything', () => {
+      // "to" and "my" must not become a wildcard that lists the whole registry.
+      expect(searchTools('to my the')).toHaveLength(0);
+    });
+  });
+
   test('naming a format promotes that format page', () => {
     expect(slugs('compress jpg')[0]).toBe('compress-jpg');
     expect(slugs('compress png')[0]).toBe('compress-png');

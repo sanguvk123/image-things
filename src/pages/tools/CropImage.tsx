@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom';
 import { ToolContent } from '@/components/ToolContent';
 import { Dropzone } from '@/components/Dropzone';
 import { ResultPanel } from '@/components/ResultPanel';
-import { ActionButton, ErrorNote, Pill, PillGroup } from '@/components/controls';
+import {
+  ActionButton,
+  ErrorNote,
+  Pill,
+  PillGroup,
+  PRIVACY_LINE,
+} from '@/components/controls';
 import { useImageTool } from '@/image/useImageTool';
 import { cropImage } from '@/image/operations';
 import {
@@ -192,9 +198,7 @@ export function CropImage({ tool }: { tool: Tool }) {
           <div className="space-y-4">
             <Dropzone onFiles={(files) => files[0] && selectFile(files[0])} />
             {error && <ErrorNote>{error}</ErrorNote>}
-            <p className="text-center text-xs text-ink-faint">
-              Private • Secure • No signup
-            </p>
+            <p className="text-center text-xs text-ink-faint">{PRIVACY_LINE}</p>
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
 import { ToolContent } from '@/components/ToolContent';
-import { ActionButton, ErrorNote } from '@/components/controls';
+import { ActionButton, ErrorNote, PRIVACY_LINE } from '@/components/controls';
 import { formatBytes } from '@/image/format';
 import {
   createCanvas,
@@ -198,9 +198,7 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
                 {`Create PDF (${images.length} ${images.length === 1 ? 'page' : 'pages'})`}
               </ActionButton>
             ) : (
-              <p className="text-center text-xs text-ink-faint">
-                Private • Secure • No signup
-              </p>
+              <p className="text-center text-xs text-ink-faint">{PRIVACY_LINE}</p>
             )}
           </>
         )}

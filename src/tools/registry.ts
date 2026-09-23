@@ -201,7 +201,14 @@ export const TOOLS: Tool[] = [
     tagline: 'Exact target size',
     description: 'Compress your image to under 100KB.',
     category: 'optimize',
-    keywords: ['smaller', '100kb', 'target size', 'exact size', 'upload limit'],
+    keywords: [
+      'smaller',
+      '100kb',
+      'photo',
+      'target size',
+      'exact size',
+      'upload limit',
+    ],
     targetKB: 100,
     seo: {
       title: 'Compress Image to 100KB Online — Free Tool',
@@ -826,7 +833,16 @@ export const TOOLS: Tool[] = [
     tagline: 'Crop precisely',
     description: 'Crop your image to the exact area you want.',
     category: 'transform',
-    keywords: ['crop', 'trim', 'cut', 'square', 'aspect ratio', 'frame'],
+    keywords: [
+      'crop',
+      'trim',
+      'cut',
+      'square',
+      'photo square',
+      'make square',
+      'aspect ratio',
+      'frame',
+    ],
     popular: true,
     seo: {
       title: 'Crop Image Online — Free Visual Crop Tool',
@@ -1067,7 +1083,21 @@ export const TOOLS: Tool[] = [
     description:
       'Remove camera, location and device information stored inside your image.',
     category: 'privacy',
-    keywords: ['metadata', 'exif', 'gps', 'location', 'privacy', 'camera', 'strip'],
+    // "info" and "details" are what people call metadata when they do not
+    // know the word "metadata".
+    keywords: [
+      'metadata',
+      'exif',
+      'gps',
+      'location',
+      'privacy',
+      'camera',
+      'strip',
+      'image info',
+      'photo info',
+      'details',
+      'data',
+    ],
     seo: {
       title: 'Remove Image Metadata and EXIF Data — Free',
       description:
@@ -1080,7 +1110,15 @@ export const TOOLS: Tool[] = [
     tagline: 'One-click',
     description: 'Remove the background from your image.',
     category: 'privacy',
-    keywords: ['background', 'transparent', 'cutout', 'remove bg', 'isolate'],
+    keywords: [
+      'background',
+      'transparent',
+      'make transparent',
+      'background transparent',
+      'cutout',
+      'remove bg',
+      'isolate',
+    ],
     popular: true,
     seo: {
       title: 'Remove Image Background — Free, One Click',

@@ -86,6 +86,43 @@ function mentionsASize(term: string): boolean {
 }
 
 /**
+ * Grammatical words that carry no intent on their own.
+ *
+ * Matching is AND -- every term must hit something -- which is what keeps
+ * "remove bg" narrow. The cost is that one word the registry has no keyword
+ * for discards an otherwise exact match: "jpg to png" returned Image -> PDF,
+ * because "to" matched only that entry and eliminated the JPG -> PNG page
+ * that exists, while "jpg png" ranked it first.
+ *
+ * Dropping these before matching fixes that without loosening AND. They are
+ * removed rather than scored, so they cannot influence ranking either. A
+ * query of nothing but filler still returns nothing, because the fallback
+ * below keeps the original terms and they genuinely match no tool.
+ *
+ * "photo" and "make" are deliberately absent, despite appearing in most
+ * titles. They are load-bearing: dropping them turned "make image smaller"
+ * into "smaller", which stopped the make-image-smaller alias winning the
+ * exact phrasing it exists to serve. A word being common is not the same as
+ * a word being meaningless.
+ */
+const FILLER = new Set([
+  'a', 'an', 'and', 'for', 'from', 'how', 'i', 'in', 'into', 'it', 'me',
+  'my', 'need', 'of', 'on', 'or', 'please', 'the', 'this', 'to', 'want',
+  'with', 'under',
+]);
+
+/**
+ * The site's own subject noun. Every tool operates on an image, so the word
+ * says nothing about which one is wanted -- but as a required term it rules
+ * out every tool whose keywords happen not to repeat it, which is why
+ * "instagram image" found nothing while "instagram" found the square preset.
+ *
+ * Dropped only when the query says something else too, so a bare "image"
+ * still lists the general tools rather than returning nothing.
+ */
+const SUBJECT = new Set(['image', 'images', 'picture', 'pictures', 'pic', 'pics']);
+
+/**
  * Returns tools matching `query`, best match first.
  *
  * Multi-word queries are treated as AND: every term must match something, so
@@ -93,7 +130,14 @@ function mentionsASize(term: string): boolean {
  * that merely mentions "remove".
  */
 export function searchTools(query: string, limit = 8): Tool[] {
-  const terms = normalize(query).split(' ').filter(Boolean);
+  const typed = normalize(query).split(' ').filter(Boolean);
+  // If the query is nothing but filler, keep it as typed so it fails to match
+  // rather than silently becoming "show me everything".
+  const withoutFiller = typed.filter((term) => !FILLER.has(term));
+  const base = withoutFiller.length > 0 ? withoutFiller : typed;
+  // Same fallback for the subject noun: "image" alone still searches.
+  const specific = base.filter((term) => !SUBJECT.has(term));
+  const terms = specific.length > 0 ? specific : base;
   if (terms.length === 0) return [];
 
   const scored: { tool: Tool; score: number }[] = [];
