@@ -3,10 +3,10 @@ import {
   loadImage,
   releaseImage,
   releaseResult,
-  UnsupportedImageError,
   type LoadedImage,
   type ProcessedImage,
 } from './pipeline';
+import { messageForLoadFailure, messageForRunFailure } from './errors';
 
 /**
  * Shared state machine for every tool page.
@@ -56,11 +56,7 @@ export function useImageTool() {
         imageRef.current = loaded;
         setImage(loaded);
       } catch (cause) {
-        setError(
-          cause instanceof UnsupportedImageError
-            ? cause.message
-            : 'Something went wrong opening that image.',
-        );
+        setError(messageForLoadFailure(cause, file.name));
       }
     },
     [clearResult],
@@ -85,11 +81,9 @@ export function useImageTool() {
         resultRef.current = produced;
         setResult(produced);
       } catch (cause) {
-        setError(
-          cause instanceof Error
-            ? cause.message
-            : 'Something went wrong processing that image.',
-        );
+        // Deliberately not cause.message: those strings describe internals
+        // ("Array buffer allocation failed") and give the user nothing to act on.
+        setError(messageForRunFailure(cause));
       } finally {
         setBusy(false);
       }

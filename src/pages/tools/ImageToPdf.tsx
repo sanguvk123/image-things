@@ -11,10 +11,10 @@ import {
   encode,
   loadImage,
   releaseImage,
-  UnsupportedImageError,
   type LoadedImage,
   type ProcessedImage,
 } from '@/image/pipeline';
+import { messageForLoadFailure } from '@/image/errors';
 import { buildPdf, type PdfPage } from '@/image/pdf';
 import { outputFileName } from '@/image/format';
 import { headingFor, type Tool } from '@/tools/registry';
@@ -50,11 +50,7 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
       try {
         loaded.push(await loadImage(file));
       } catch (cause) {
-        setError(
-          cause instanceof UnsupportedImageError
-            ? `${file.name}: ${cause.message}`
-            : `Could not open ${file.name}.`,
-        );
+        setError(messageForLoadFailure(cause, file.name));
       }
     }
 
@@ -111,9 +107,9 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
           '.pdf',
         ),
       });
-    } catch (cause) {
+    } catch {
       setError(
-        cause instanceof Error ? cause.message : 'Could not create the PDF.',
+        'The PDF could not be created. Try again, or remove the largest image and retry.',
       );
     } finally {
       setBusy(false);

@@ -111,4 +111,43 @@ describe('Compress Image', () => {
       /doesn't look like an image we can open/i,
     );
   });
+
+  // Spec §17. Asserted through the rendered page rather than against the copy
+  // helper, because the helper being correct proves nothing if the page never
+  // shows what it returns.
+  test('the failure names the file and says what to do next', async () => {
+    const user = userEvent.setup();
+    globalThis.createImageBitmap = (() =>
+      Promise.reject(new Error('decode failed'))) as unknown as typeof createImageBitmap;
+
+    renderTool('compress-image');
+    await user.upload(
+      screen.getByLabelText('Choose image'),
+      fakeImageFile('broken.jpg'),
+    );
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('broken.jpg');
+    expect(alert).toHaveTextContent(/try saving it as/i);
+  });
+
+  test('an operation that fails does not show the user an internal error', async () => {
+    const user = userEvent.setup();
+
+    renderTool('compress-image');
+    await uploadPhoto(user);
+
+    // A failing encoder is the real path here: pipeline.encode rejects with
+    // "The browser could not encode this image." -- accurate, and useless to
+    // someone who just wants a smaller file.
+    HTMLCanvasElement.prototype.toBlob = function (callback: BlobCallback) {
+      callback(null);
+    };
+
+    await user.click(await screen.findByRole('button', { name: 'Compress Image' }));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).not.toHaveTextContent(/could not encode this image/i);
+    expect(alert).toHaveTextContent(/try/i);
+  });
 });
