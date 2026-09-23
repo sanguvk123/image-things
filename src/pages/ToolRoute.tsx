@@ -17,6 +17,8 @@ import { GrayscaleImage } from './tools/GrayscaleImage';
 import { SharpenImage } from './tools/SharpenImage';
 import { RemoveMetadata } from './tools/RemoveMetadata';
 import { ImageToPdf } from './tools/ImageToPdf';
+import { UpscaleImage } from './tools/UpscaleImage';
+import { RemoveBackground } from './tools/RemoveBackground';
 
 /**
  * Maps a tool slug to its page component.
@@ -48,6 +50,8 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'sharpen-image': SharpenImage,
   'remove-metadata': RemoveMetadata,
   'image-to-pdf': ImageToPdf,
+  'upscale-image': UpscaleImage,
+  'remove-background': RemoveBackground,
 };
 
 export function ToolRoute() {

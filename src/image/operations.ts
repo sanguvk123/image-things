@@ -1,6 +1,7 @@
 import type { OutputFormat } from '@/tools/registry';
 import type { CropRect } from './crop';
 import { sharpenPixels, SHARPEN_AMOUNT, type SharpenLevel } from './sharpen';
+import { removeBackgroundPixels } from './background';
 import {
   context2d,
   createCanvas,
@@ -330,5 +331,73 @@ export async function removeMetadata(image: LoadedImage): Promise<ProcessedImage
     format,
     sourceName: image.file.name,
     suffix: 'clean',
+  });
+}
+
+/** How much bigger to make the image. */
+export type UpscaleFactor = 2 | 3 | 4;
+
+/**
+ * Enlarge an image.
+ *
+ * The browser's high-quality smoothing does the interpolation; a light
+ * sharpening pass afterwards counteracts the softness that any upscale
+ * introduces, which is what makes the result look deliberate rather than
+ * merely stretched.
+ */
+export async function upscaleImage(
+  image: LoadedImage,
+  factor: UpscaleFactor,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const width = image.width * factor;
+  const height = image.height * factor;
+
+  const { canvas, ctx } = drawToCanvas(image.bitmap, width, height, format);
+
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  pixels.data.set(
+    sharpenPixels(pixels.data, canvas.width, canvas.height, SHARPEN_AMOUNT.light),
+  );
+  ctx.putImageData(pixels, 0, 0);
+
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+  return toResult(blob, {
+    width,
+    height,
+    format,
+    sourceName: image.file.name,
+    suffix: `${factor}x`,
+  });
+}
+
+/**
+ * Remove the background.
+ *
+ * Always outputs PNG: the whole point is transparency, and JPEG has no alpha
+ * channel to put it in.
+ */
+export async function removeBackground(
+  image: LoadedImage,
+  tolerance: number,
+): Promise<ProcessedImage> {
+  const format: OutputFormat = 'png';
+  const canvas = createCanvas(image.width, image.height);
+  const ctx = context2d(canvas);
+  ctx.drawImage(image.bitmap, 0, 0);
+
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  pixels.data.set(
+    removeBackgroundPixels(pixels.data, canvas.width, canvas.height, { tolerance }),
+  );
+  ctx.putImageData(pixels, 0, 0);
+
+  const blob = await encode(canvas, format);
+  return toResult(blob, {
+    width: image.width,
+    height: image.height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'no-bg',
   });
 }
