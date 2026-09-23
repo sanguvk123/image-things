@@ -5,6 +5,7 @@ import { ImagePreview } from './ImagePreview';
 import { ResultPanel } from './ResultPanel';
 import { ErrorNote } from './controls';
 import { ToolIcon, categoryStyle } from './ToolIcon';
+import { ToolContent } from './ToolContent';
 import type { LoadedImage, ProcessedImage } from '@/image/pipeline';
 import { TOOLS, headingFor, type Tool } from '@/tools/registry';
 
@@ -102,15 +103,52 @@ export function ToolLayout({
               hint={acceptHint}
             />
             {error && <ErrorNote>{error}</ErrorNote>}
-            <p className="text-center text-xs text-ink-faint">
-              Private • Secure • No signup
-            </p>
+            <TrustBadges />
           </div>
         )}
       </div>
 
+      <ToolContent tool={tool} />
       <RelatedTools tool={tool} />
     </div>
+  );
+}
+
+/**
+ * The reassurance row under the upload area.
+ *
+ * Deliberately does NOT say "files deleted after an hour", which is the
+ * standard line on tools of this kind. Nothing is uploaded here, so that
+ * claim would be false -- and it is a weaker promise than the true one.
+ */
+function TrustBadges() {
+  const badges = [
+    'Free',
+    'No signup',
+    'No watermark',
+    'Never uploaded',
+  ];
+
+  return (
+    <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
+      {badges.map((badge) => (
+        <li key={badge} className="flex items-center gap-1.5 text-xs text-ink-faint">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-3.5 w-3.5 text-good"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m5 12 5 5L20 7" />
+          </svg>
+          {badge}
+        </li>
+      ))}
+    </ul>
   );
 }
 

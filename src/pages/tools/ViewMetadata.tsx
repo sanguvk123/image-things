@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
 import { ImagePreview } from '@/components/ImagePreview';
+import { ToolContent } from '@/components/ToolContent';
 import { ErrorNote } from '@/components/controls';
 import { useImageTool } from '@/image/useImageTool';
 import { readMetadata, type MetadataEntry } from '@/image/metadata';
@@ -71,6 +72,8 @@ export function ViewMetadata({ tool }: { tool: Tool }) {
           </div>
         )}
       </div>
+
+      <ToolContent tool={tool} />
     </div>
   );
 }

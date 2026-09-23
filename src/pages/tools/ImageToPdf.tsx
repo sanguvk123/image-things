@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
+import { ToolContent } from '@/components/ToolContent';
 import { ActionButton, ErrorNote } from '@/components/controls';
 import { formatBytes } from '@/image/format';
 import {
@@ -208,6 +209,8 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
           </>
         )}
       </div>
+
+      <ToolContent tool={tool} />
     </div>
   );
 }

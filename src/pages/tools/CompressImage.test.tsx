@@ -21,8 +21,22 @@ describe('Compress Image', () => {
       screen.getByRole('heading', { level: 1, name: 'Compress Image' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Drop image here')).toBeInTheDocument();
-    expect(screen.getByText(/private • secure • no signup/i)).toBeInTheDocument();
+    expect(screen.getByText('Never uploaded')).toBeInTheDocument();
+    expect(screen.getByText('No signup')).toBeInTheDocument();
     expect(screen.queryByText('Compression')).not.toBeInTheDocument();
+  });
+
+  test('keeps the tool above the supporting content', () => {
+    // The failure mode for SEO copy is an article with the tool buried under
+    // it. Someone searching "compress image" wants the upload box first.
+    renderTool('compress-image');
+
+    const upload = screen.getByText('Drop image here');
+    const howTo = screen.getByRole('heading', { name: /^how to/i });
+
+    expect(upload.compareDocumentPosition(howTo)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
   });
 
   test('choosing an image immediately shows its name, size and dimensions', async () => {
