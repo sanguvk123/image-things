@@ -14,6 +14,7 @@ import {
   BrightenImage,
 } from './tools/AdjustImage';
 import { GrayscaleImage } from './tools/GrayscaleImage';
+import { SharpenImage } from './tools/SharpenImage';
 
 /**
  * Maps a tool slug to its page component.
@@ -42,6 +43,7 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'adjust-saturation': AdjustSaturation,
   'grayscale-image': GrayscaleImage,
   'blur-image': BlurImage,
+  'sharpen-image': SharpenImage,
 };
 
 export function ToolRoute() {

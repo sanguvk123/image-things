@@ -1,5 +1,6 @@
 import type { OutputFormat } from '@/tools/registry';
 import type { CropRect } from './crop';
+import { sharpenPixels, SHARPEN_AMOUNT, type SharpenLevel } from './sharpen';
 import {
   context2d,
   createCanvas,
@@ -272,5 +273,41 @@ export async function applyFilter(
     format,
     sourceName: image.file.name,
     suffix,
+  });
+}
+
+/**
+ * Sharpen (spec §27).
+ *
+ * Unlike the other adjustments this needs the actual pixels, since CSS has no
+ * sharpen filter — hence the read/convolve/write round trip.
+ */
+export async function sharpenImage(
+  image: LoadedImage,
+  level: SharpenLevel,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const canvas = createCanvas(image.width, image.height);
+  const ctx = context2d(canvas);
+  fillBackgroundIfOpaque(ctx, format);
+  ctx.drawImage(image.bitmap, 0, 0);
+
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const sharpened = sharpenPixels(
+    pixels.data,
+    canvas.width,
+    canvas.height,
+    SHARPEN_AMOUNT[level],
+  );
+  pixels.data.set(sharpened);
+  ctx.putImageData(pixels, 0, 0);
+
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+  return toResult(blob, {
+    width: image.width,
+    height: image.height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'sharpened',
   });
 }
