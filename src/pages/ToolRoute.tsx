@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { getTool, type Tool } from '@/tools/registry';
+import { toolMeta } from '@/tools/seo';
+import { DocumentHead } from '@/components/DocumentHead';
 import { CompressImage } from './tools/CompressImage';
 import { CompressToSize } from './tools/CompressToSize';
 import { ResizeImage } from './tools/ResizeImage';
@@ -61,7 +63,12 @@ export function ToolRoute() {
   if (!tool) return <NotFound />;
 
   const Page = PAGES[tool.slug];
-  return Page ? <Page tool={tool} /> : <ComingSoon tool={tool} />;
+  return (
+    <>
+      <DocumentHead {...toolMeta(tool)} />
+      {Page ? <Page tool={tool} /> : <ComingSoon tool={tool} />}
+    </>
+  );
 }
 
 function ComingSoon({ tool }: { tool: Tool }) {
@@ -81,6 +88,9 @@ function ComingSoon({ tool }: { tool: Tool }) {
 function NotFound() {
   return (
     <div className="mx-auto max-w-xl px-6 py-24 text-center">
+      {/* noindex: an unknown slug must never enter the index as a real page. */}
+      <title>Tool not found — Image Tools</title>
+      <meta name="robots" content="noindex" />
       <h1 className="text-3xl font-semibold tracking-[-0.02em] text-ink">
         Tool not found
       </h1>

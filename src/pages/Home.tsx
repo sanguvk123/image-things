@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
 import { ToolSearch } from '@/components/ToolSearch';
+import { DocumentHead } from '@/components/DocumentHead';
 import { popularTools, type Tool } from '@/tools/registry';
+import { HOME_META } from '@/tools/seo';
 
 export function Home() {
   const tools = popularTools();
 
   return (
     <div className="mx-auto max-w-5xl px-6 pb-24">
+      <DocumentHead {...HOME_META} />
       <section className="flex flex-col items-center pt-20 pb-14 text-center sm:pt-28">
         <h1 className="max-w-2xl text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl">
           Image tools that just work.
