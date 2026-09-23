@@ -429,6 +429,112 @@ export const TOOLS: Tool[] = [
     },
   },
   {
+    slug: 'webp-to-png',
+    title: 'WebP → PNG',
+    h1: 'Convert WebP to PNG',
+    tagline: 'Convert format',
+    description: 'Convert your WebP image to PNG.',
+    category: 'convert',
+    keywords: ['webp', 'png', 'convert', 'change format', 'transparent'],
+    convert: { fromLabel: 'WebP', to: 'png' },
+    seo: {
+      title: 'WebP to PNG Converter — Keep Transparency',
+      description:
+        'Convert WebP images to PNG with transparency preserved. Useful when an app or site will not accept WebP files. Free tool.',
+    },
+  },
+  {
+    slug: 'heic-to-jpg',
+    title: 'HEIC → JPG',
+    h1: 'Convert HEIC to JPG',
+    tagline: 'iPhone photos',
+    description: 'Convert your iPhone HEIC photo to a JPG anything can open.',
+    category: 'convert',
+    keywords: ['heic', 'heif', 'iphone', 'apple', 'jpg', 'jpeg', 'convert', 'photo'],
+    popular: true,
+    convert: { fromLabel: 'HEIC', to: 'jpeg' },
+    seo: {
+      title: 'HEIC to JPG Converter — iPhone Photos, Free',
+      description:
+        'Convert iPhone HEIC photos to JPG so any device can open them. Works in every browser, and your photo never leaves it.',
+    },
+  },
+  {
+    slug: 'heic-to-png',
+    title: 'HEIC → PNG',
+    h1: 'Convert HEIC to PNG',
+    tagline: 'iPhone photos',
+    description: 'Convert your iPhone HEIC photo to PNG.',
+    category: 'convert',
+    keywords: ['heic', 'heif', 'iphone', 'apple', 'png', 'convert', 'photo'],
+    convert: { fromLabel: 'HEIC', to: 'png' },
+    seo: {
+      title: 'HEIC to PNG Converter — Free iPhone Photo Tool',
+      description:
+        'Turn iPhone HEIC photos into lossless PNG files. Runs entirely in your browser, so nothing is uploaded anywhere. Free.',
+    },
+  },
+  {
+    slug: 'avif-to-jpg',
+    title: 'AVIF → JPG',
+    h1: 'Convert AVIF to JPG',
+    tagline: 'Convert format',
+    description: 'Convert your AVIF image to JPG.',
+    category: 'convert',
+    keywords: ['avif', 'jpg', 'jpeg', 'convert', 'change format'],
+    convert: { fromLabel: 'AVIF', to: 'jpeg' },
+    seo: {
+      title: 'AVIF to JPG Converter — Free and Instant',
+      description:
+        'Convert AVIF images into widely supported JPG files. Handy when older software refuses to open an AVIF. Free, no signup.',
+    },
+  },
+  {
+    slug: 'avif-to-png',
+    title: 'AVIF → PNG',
+    h1: 'Convert AVIF to PNG',
+    tagline: 'Convert format',
+    description: 'Convert your AVIF image to PNG.',
+    category: 'convert',
+    keywords: ['avif', 'png', 'convert', 'change format', 'transparent'],
+    convert: { fromLabel: 'AVIF', to: 'png' },
+    seo: {
+      title: 'AVIF to PNG Converter — Lossless and Free',
+      description:
+        'Convert AVIF images to PNG without quality loss and with transparency kept intact. Runs in your browser. Free tool.',
+    },
+  },
+  {
+    slug: 'bmp-to-jpg',
+    title: 'BMP → JPG',
+    h1: 'Convert BMP to JPG',
+    tagline: 'Convert format',
+    description: 'Convert your BMP image to a much smaller JPG.',
+    category: 'convert',
+    keywords: ['bmp', 'bitmap', 'jpg', 'jpeg', 'convert', 'smaller'],
+    convert: { fromLabel: 'BMP', to: 'jpeg' },
+    seo: {
+      title: 'BMP to JPG Converter — Free Bitmap Converter',
+      description:
+        'Convert old BMP bitmap files to JPG and cut the file size dramatically. Fast, free, and private in your browser.',
+    },
+  },
+  {
+    slug: 'tiff-to-jpg',
+    title: 'TIFF → JPG',
+    h1: 'Convert TIFF to JPG',
+    tagline: 'Scans and archives',
+    description: 'Convert your TIFF scan to a JPG anything can open.',
+    category: 'convert',
+    keywords: ['tiff', 'tif', 'scan', 'jpg', 'jpeg', 'convert', 'archive'],
+    convert: { fromLabel: 'TIFF', to: 'jpeg' },
+    seo: {
+      title: 'TIFF to JPG Converter — Free Online Tool',
+      description:
+        'Convert TIFF scans and archive images to JPG, which every device can open. Decoded in your browser, never uploaded.',
+    },
+  },
+  {
     slug: 'image-to-pdf',
     title: 'Image → PDF',
     h1: 'Convert images to PDF',
