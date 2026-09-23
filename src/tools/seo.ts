@@ -19,7 +19,7 @@ import { TOOLS, type Tool } from './registry';
  * these pages get indexed.
  */
 export const SITE_URL: string =
-  import.meta.env?.VITE_SITE_URL ?? 'https://imagethings.shop';
+  import.meta.env?.VITE_SITE_URL ?? 'https://www.imagethings.shop';
 
 /** Google truncates around here; staying under keeps the full title visible. */
 export const MAX_TITLE_LENGTH = 60;

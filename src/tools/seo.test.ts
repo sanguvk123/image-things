@@ -12,12 +12,16 @@ import {
 } from './seo';
 
 describe('SITE_URL', () => {
-  it('is the production domain', () => {
+  it('is the production domain, including the www host', () => {
     // Most SEO assertions derive from SITE_URL, so they would keep passing if
     // it were wrong. This is the one place that pins the real value: a
     // canonical naming a domain that does not serve the site tells Google to
     // index that domain instead, which would deindex every page here.
-    expect(SITE_URL).toBe('https://imagethings.shop');
+    //
+    // www is not cosmetic. The apex 308-redirects to www, so canonicals built
+    // on the bare domain would point at URLs that redirect instead of at the
+    // URLs actually served -- the canonical and the served URL must agree.
+    expect(SITE_URL).toBe('https://www.imagethings.shop');
   });
 
   it('has no trailing slash, so canonicals never double up', () => {

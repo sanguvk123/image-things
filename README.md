@@ -138,7 +138,9 @@ rewrite rules are needed for the tool pages themselves.
 
 ### The origin must match the host
 
-The production domain is `imagethings.shop`.
+The production domain is `www.imagethings.shop`. The `www` host is canonical:
+the apex 308-redirects to it, so a canonical on the bare domain would name a
+URL that redirects rather than the URL actually served.
 
 Canonical URLs and the sitemap are built from `SITE_URL`. A canonical naming a
 domain that does not serve the page tells Google to index that other domain

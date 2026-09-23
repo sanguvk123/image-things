@@ -4,8 +4,14 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
-/** The production domain. Used unless an environment overrides it. */
-const DEFAULT_SITE_URL = 'https://imagethings.shop';
+/**
+ * The production domain. Used unless an environment overrides it.
+ *
+ * The www host is canonical: the apex 308-redirects to it, so canonicals on
+ * the bare domain would point at URLs that redirect rather than at the URLs
+ * actually served.
+ */
+const DEFAULT_SITE_URL = 'https://www.imagethings.shop';
 
 /**
  * Resolves the origin that canonical URLs and the sitemap are built from.
