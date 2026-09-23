@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { getTool, type Tool } from '@/tools/registry';
 import { CompressImage } from './tools/CompressImage';
+import { CompressToSize } from './tools/CompressToSize';
 
 /**
  * Maps a tool slug to its page component.
@@ -10,6 +11,11 @@ import { CompressImage } from './tools/CompressImage';
  */
 const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'compress-image': CompressImage,
+  'compress-image-to-size': CompressToSize,
+  'compress-image-to-50kb': CompressToSize,
+  'compress-image-to-100kb': CompressToSize,
+  'compress-image-to-200kb': CompressToSize,
+  'compress-image-to-500kb': CompressToSize,
 };
 
 export function ToolRoute() {

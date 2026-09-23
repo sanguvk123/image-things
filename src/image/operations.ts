@@ -7,6 +7,8 @@ import {
   type LoadedImage,
   type ProcessedImage,
 } from './pipeline';
+import { scaleToFit } from './format';
+import { searchForTargetSize } from './targetSize';
 
 /**
  * The actual image operations, one exported function per user intent.
@@ -49,4 +51,55 @@ export async function compressImage(
     sourceName: image.file.name,
     suffix: 'compressed',
   });
+}
+
+export interface TargetSizeResult {
+  result: ProcessedImage;
+  /** False when even the smallest encode could not reach the target. */
+  metTarget: boolean;
+}
+
+/**
+ * Compress to an exact target size (spec §16).
+ *
+ * Always encodes as JPEG: it is the only widely supported format with a
+ * quality dial fine enough to land on a specific byte budget.
+ */
+export async function compressToTargetSize(
+  image: LoadedImage,
+  targetBytes: number,
+): Promise<TargetSizeResult> {
+  const format: OutputFormat = 'jpeg';
+
+  const dimensionsFor = (maxEdge: number | null) =>
+    maxEdge
+      ? scaleToFit(image.width, image.height, maxEdge)
+      : { width: image.width, height: image.height };
+
+  const render = async (quality: number, maxEdge: number | null) => {
+    const { width, height } = dimensionsFor(maxEdge);
+    const { canvas } = drawToCanvas(image.bitmap, width, height, format);
+    return { blob: await encode(canvas, format, quality), width, height };
+  };
+
+  const search = await searchForTargetSize(
+    async (quality, maxEdge) => (await render(quality, maxEdge)).blob.size,
+    targetBytes,
+  );
+
+  // If nothing fit, hand back the smallest we managed rather than an error —
+  // a 120KB result against a 100KB goal is still useful, and the UI says so.
+  const chosen = search.best ?? search.smallest;
+  const { blob, width, height } = await render(chosen.quality, chosen.maxEdge);
+
+  return {
+    metTarget: blob.size <= targetBytes,
+    result: toResult(blob, {
+      width,
+      height,
+      format,
+      sourceName: image.file.name,
+      suffix: 'compressed',
+    }),
+  };
 }

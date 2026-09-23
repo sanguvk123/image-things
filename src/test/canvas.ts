@@ -13,13 +13,27 @@ import { vi } from 'vitest';
 export interface CanvasStub {
   /** Bytes the fake encoder reports for the next encode. */
   encodedSize: number;
-  /** Every (mimeType, quality) pair passed to toBlob, in order. */
-  encodeCalls: { type: string; quality: number | undefined }[];
+  /** Every (mimeType, quality, pixels) triple passed to toBlob, in order. */
+  encodeCalls: {
+    type: string;
+    quality: number | undefined;
+    width: number;
+    height: number;
+  }[];
   restore: () => void;
 }
 
 export function installCanvasStubs(
-  options: { width?: number; height?: number; encodedSize?: number } = {},
+  options: {
+    width?: number;
+    height?: number;
+    encodedSize?: number;
+    /**
+     * When set, encoded size scales with quality and pixel count instead of
+     * being fixed. Required for testing anything that searches for a size.
+     */
+    sizeModel?: (quality: number, width: number, height: number) => number;
+  } = {},
 ): CanvasStub {
   const width = options.width ?? 1920;
   const height = options.height ?? 1080;
@@ -74,12 +88,23 @@ export function installCanvasStubs(
   }) as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
   HTMLCanvasElement.prototype.toBlob = function (
+    this: HTMLCanvasElement,
     callback: BlobCallback,
     type?: string,
     quality?: number,
   ) {
-    stub.encodeCalls.push({ type: type ?? 'image/png', quality });
-    const bytes = new Uint8Array(Math.max(1, stub.encodedSize));
+    stub.encodeCalls.push({
+      type: type ?? 'image/png',
+      quality,
+      width: this.width,
+      height: this.height,
+    });
+
+    const size = options.sizeModel
+      ? options.sizeModel(quality ?? 1, this.width, this.height)
+      : stub.encodedSize;
+
+    const bytes = new Uint8Array(Math.max(1, Math.round(size)));
     callback(new Blob([bytes], { type: type ?? 'image/png' }));
   };
 
