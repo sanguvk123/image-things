@@ -1,0 +1,4 @@
+# Every tool is its own URL (/compress-image, /jpg-to-png, …) but the app is a
+# single-page bundle. Without this, refreshing or sharing a tool link would
+# 404 on static hosts. Netlify/Cloudflare Pages read this file.
+/*  /index.html  200
