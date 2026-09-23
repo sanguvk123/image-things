@@ -1,4 +1,5 @@
 import type { OutputFormat } from '@/tools/registry';
+import type { CropRect } from './crop';
 import {
   context2d,
   createCanvas,
@@ -209,5 +210,38 @@ export async function flipImage(
     format,
     sourceName: image.file.name,
     suffix: 'flipped',
+  });
+}
+
+/** Cut out a pixel rectangle of the image (spec §20). */
+export async function cropImage(
+  image: LoadedImage,
+  rect: CropRect,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const canvas = createCanvas(rect.width, rect.height);
+  const ctx = context2d(canvas);
+  fillBackgroundIfOpaque(ctx, format);
+
+  // Draw only the selected source region, at 1:1 into the new canvas.
+  ctx.drawImage(
+    image.bitmap,
+    rect.x,
+    rect.y,
+    rect.width,
+    rect.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+  return toResult(blob, {
+    width: canvas.width,
+    height: canvas.height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'cropped',
   });
 }

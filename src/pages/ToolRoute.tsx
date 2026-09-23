@@ -6,6 +6,7 @@ import { ResizeImage } from './tools/ResizeImage';
 import { ConvertImage } from './tools/ConvertImage';
 import { RotateImage } from './tools/RotateImage';
 import { FlipImage } from './tools/FlipImage';
+import { CropImage } from './tools/CropImage';
 
 /**
  * Maps a tool slug to its page component.
@@ -28,6 +29,7 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'png-to-webp': ConvertImage,
   'rotate-image': RotateImage,
   'flip-image': FlipImage,
+  'crop-image': CropImage,
 };
 
 export function ToolRoute() {
