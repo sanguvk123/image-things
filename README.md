@@ -134,12 +134,34 @@ step read the same registry, so they cannot disagree.
 ## Deploying
 
 The build output in `dist/` is static, and every URL is a real file, so no
-rewrite rules are needed for the tool pages themselves. `public/_redirects`
-only handles genuinely unknown paths, and returns 404 rather than 200 so that a
-mistyped URL is not reported to crawlers as a valid page.
+rewrite rules are needed for the tool pages themselves.
 
-Set the production origin in `src/tools/seo.ts` (`SITE_URL`) before deploying:
-it is what canonical URLs and the sitemap are built from.
+### The origin must match the host
+
+Canonical URLs and the sitemap are built from `SITE_URL`. A canonical naming a
+domain that does not serve the page tells Google to index that other domain
+instead, so if it is wrong, none of these pages get indexed. It is resolved at
+build time by `vite.config.ts`, in order:
+
+1. the `SITE_URL` (or `VITE_SITE_URL`) environment variable,
+2. `VERCEL_PROJECT_PRODUCTION_URL`, the project's stable production domain,
+3. a hardcoded fallback for local builds.
+
+`VERCEL_URL` is deliberately unused: it is unique per deployment, so canonicals
+built from it would nominate a throwaway preview build as the real site. Set
+`SITE_URL` in the Vercel project once a custom domain is attached.
+
+### Unknown paths
+
+`dist/404.html` is generated alongside the pages, and Vercel serves it with a
+genuine 404 status for any path that is not a file. It carries `noindex` and no
+canonical, because it stands for no single URL.
+
+The alternative — rewriting everything to `index.html` — would answer 200 for
+mistyped URLs, telling crawlers that an unbounded set of junk URLs are real
+pages. That is a soft 404, and it is why there is no catch-all rewrite in
+`vercel.json`. (The old `public/_redirects` was Netlify syntax, which Vercel
+ignores entirely.)
 
 ## Third-party licences
 

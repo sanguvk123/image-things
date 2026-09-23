@@ -3,6 +3,7 @@ dist
 dist-ssr
 dist-prerender
 coverage
+.vercel
 *.local
 .DS_Store
 .idex

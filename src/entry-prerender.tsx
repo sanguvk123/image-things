@@ -19,4 +19,10 @@ export function renderPath(path: string): string {
 }
 
 export { allPageMeta, canonicalUrl, SITE_URL } from './tools/seo';
-export { buildRobots, buildSitemap, outputPathFor, renderPageHtml } from './seo/html';
+export {
+  buildRobots,
+  buildSitemap,
+  outputPathFor,
+  renderNotFoundHtml,
+  renderPageHtml,
+} from './seo/html';

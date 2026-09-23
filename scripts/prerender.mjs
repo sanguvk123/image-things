@@ -21,7 +21,7 @@ const outDir = join(root, 'dist');
 const serverDir = join(root, 'dist-prerender');
 
 const { renderPath, allPageMeta, canonicalUrl, renderPageHtml, outputPathFor,
-        buildSitemap, buildRobots } = await import(
+        buildSitemap, buildRobots, renderNotFoundHtml, SITE_URL } = await import(
   join(serverDir, 'entry-prerender.js')
 );
 
@@ -46,7 +46,19 @@ await writeFile(
   'utf8',
 );
 
+// Served by Vercel with a real 404 status for any path that is not a file,
+// which is what stops mistyped URLs being reported to crawlers as valid pages.
+// Rendered from an unrouted path so the app produces its not-found view.
+await writeFile(
+  join(outDir, '404.html'),
+  renderNotFoundHtml(template, renderPath('/__not_found__')),
+  'utf8',
+);
+
 // The server build is a build artefact, not something to deploy.
 await rm(serverDir, { recursive: true, force: true });
 
-console.log(`Prerendered ${pages.length} pages, sitemap.xml and robots.txt.`);
+console.log(
+  `Prerendered ${pages.length} pages for ${SITE_URL}, plus 404.html, ` +
+    `sitemap.xml and robots.txt.`,
+);

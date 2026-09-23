@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  NOT_FOUND_META,
   buildRobots,
   buildSitemap,
   escapeAttribute,
   outputPathFor,
+  renderNotFoundHtml,
   renderPageHtml,
   stripHoistedMetadata,
 } from './html';
@@ -167,5 +169,43 @@ describe('buildRobots', () => {
     expect(robots).toContain('User-agent: *');
     expect(robots).toContain('Allow: /');
     expect(robots).toContain('Sitemap: https://imageutility.app/sitemap.xml');
+  });
+});
+
+describe('renderNotFoundHtml', () => {
+  const html = renderNotFoundHtml(TEMPLATE, '<h1>Tool not found</h1>');
+
+  it('marks the page noindex', () => {
+    // Vercel serves 404.html for every unmatched path. Without this, one
+    // stored copy could be indexed and shown for any number of bad URLs.
+    expect(html).toContain('<meta name="robots" content="noindex" />');
+  });
+
+  it('carries no canonical URL', () => {
+    // A canonical here would nominate some real page as the duplicate target
+    // for every mistyped URL on the site.
+    expect(html).not.toContain('rel="canonical"');
+  });
+
+  it('replaces the placeholder title rather than adding a second one', () => {
+    expect(html).not.toContain('Image tools that just work.');
+    expect(html.match(/<title>/g)).toHaveLength(1);
+  });
+
+  it('keeps exactly one description', () => {
+    expect(html.match(/name="description"/g)).toHaveLength(1);
+  });
+
+  it('puts the rendered markup inside the mount point', () => {
+    expect(html).toContain('<div id="root"><h1>Tool not found</h1></div>');
+  });
+
+  it('is excluded from the sitemap', () => {
+    // It is reachable at any URL, so it belongs to no single URL.
+    const sitemap = buildSitemap(allPageMeta());
+    expect(sitemap).not.toContain(NOT_FOUND_META.title);
+    expect(allPageMeta().map((meta) => meta.title)).not.toContain(
+      NOT_FOUND_META.title,
+    );
   });
 });

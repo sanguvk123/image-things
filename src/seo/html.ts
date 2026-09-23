@@ -38,6 +38,32 @@ function metaTags(meta: PageMeta): string {
   ].join('\n    ');
 }
 
+/** Removes the template's placeholder title, description and canonical. */
+function withoutPlaceholderMetadata(template: string): string {
+  return template
+    .replace(/[ \t]*<title>[\s\S]*?<\/title>\r?\n?/i, '')
+    .replace(/[ \t]*<meta\s+name="description"[\s\S]*?\/?>\r?\n?/i, '')
+    .replace(/[ \t]*<link\s+rel="canonical"[\s\S]*?\/?>\r?\n?/i, '');
+}
+
+/** Inserts server-rendered markup into the mount point React will hydrate. */
+function withAppHtml(template: string, appHtml: string): string {
+  const body = stripHoistedMetadata(appHtml);
+  return template.replace(
+    /(<div id="root">)(<\/div>)/,
+    (_all, open: string, close: string) => `${open}${body}${close}`,
+  );
+}
+
+/**
+ * Copy for the 404 page. Not part of allPageMeta(): it has no canonical URL
+ * of its own because it is served at every URL that does not exist.
+ */
+export const NOT_FOUND_META = {
+  title: 'Page not found — Image Tools',
+  description: 'That page does not exist. Browse the image tools instead.',
+};
+
 /**
  * Removes document metadata from server-rendered app markup.
  *
@@ -66,22 +92,37 @@ export function renderPageHtml(
   meta: PageMeta,
   appHtml: string,
 ): string {
-  const withoutPlaceholders = template
-    .replace(/[ \t]*<title>[\s\S]*?<\/title>\r?\n?/i, '')
-    .replace(/[ \t]*<meta\s+name="description"[\s\S]*?\/?>\r?\n?/i, '')
-    .replace(/[ \t]*<link\s+rel="canonical"[\s\S]*?\/?>\r?\n?/i, '');
-
-  const withMeta = withoutPlaceholders.replace(
+  const withMeta = withoutPlaceholderMetadata(template).replace(
     '</head>',
     `  ${metaTags(meta)}\n  </head>`,
   );
 
-  // The mount point must keep its id and receive the markup React will hydrate.
-  const body = stripHoistedMetadata(appHtml);
-  return withMeta.replace(
-    /(<div id="root">)(<\/div>)/,
-    (_all, open: string, close: string) => `${open}${body}${close}`,
+  return withAppHtml(withMeta, appHtml);
+}
+
+/**
+ * Builds dist/404.html, which Vercel serves -- with a genuine 404 status --
+ * for any path that is not a real file.
+ *
+ * This replaces the Netlify `_redirects` rule, and the status is the whole
+ * point. A catch-all rewrite to index.html would answer 200, telling crawlers
+ * that every mistyped URL is a real page (a soft 404) and inviting an
+ * unbounded set of junk URLs into the index. There is deliberately no
+ * canonical tag: the page stands for no single URL.
+ */
+export function renderNotFoundHtml(template: string, appHtml: string): string {
+  const tags = [
+    `<title>${escapeText(NOT_FOUND_META.title)}</title>`,
+    `<meta name="description" content="${escapeAttribute(NOT_FOUND_META.description)}" />`,
+    `<meta name="robots" content="noindex" />`,
+  ].join('\n    ');
+
+  const withMeta = withoutPlaceholderMetadata(template).replace(
+    '</head>',
+    `  ${tags}\n  </head>`,
   );
+
+  return withAppHtml(withMeta, appHtml);
 }
 
 /** The file path a route should be written to, so static hosts serve it directly. */

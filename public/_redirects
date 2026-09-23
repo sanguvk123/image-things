@@ -1,7 +1,0 @@
-# Each tool URL is written as a real file at build time (scripts/prerender.mjs),
-# e.g. /compress-image -> compress-image/index.html. Static hosts serve those
-# directly, and this rule only catches whatever is left over.
-#
-# The 404 status matters: without it an unknown URL would return a 200 page,
-# which tells crawlers that every typo is a valid page (a soft 404).
-/*  /index.html  404
