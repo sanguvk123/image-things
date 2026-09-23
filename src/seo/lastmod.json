@@ -1,0 +1,258 @@
+{
+  "/": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "15d636d0"
+  },
+  "adjust-contrast": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "d52f8215"
+  },
+  "adjust-saturation": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "fb5e151d"
+  },
+  "avif-to-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "da650e8e"
+  },
+  "avif-to-png": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "62f64885"
+  },
+  "blur-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "24956940"
+  },
+  "bmp-to-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "f17bc83d"
+  },
+  "brighten-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "b84f458f"
+  },
+  "change-image-size": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "d5827852"
+  },
+  "compress-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "95703c5a"
+  },
+  "compress-image-to-100kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "3afb561c"
+  },
+  "compress-image-to-1mb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "da572a92"
+  },
+  "compress-image-to-200kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "97f0b39a"
+  },
+  "compress-image-to-300kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "32ee82b0"
+  },
+  "compress-image-to-500kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "3292e093"
+  },
+  "compress-image-to-50kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "5143d29b"
+  },
+  "compress-image-to-size": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "d566fbb4"
+  },
+  "compress-image-without-losing-quality": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "def9ac49"
+  },
+  "compress-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "963b64f4"
+  },
+  "compress-jpg-to-100kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "1a1906da"
+  },
+  "compress-jpg-to-200kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "82d2d937"
+  },
+  "compress-jpg-to-500kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "81b5a08f"
+  },
+  "compress-png": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "632fba55"
+  },
+  "compress-png-to-100kb": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "d9619d1d"
+  },
+  "compress-webp": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "43e08ca1"
+  },
+  "crop-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "16db4275"
+  },
+  "darken-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "b4a787b8"
+  },
+  "exif-viewer": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "8615f1cb"
+  },
+  "flip-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "ee685080"
+  },
+  "grayscale-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "fa903237"
+  },
+  "heic-to-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "ef19a24e"
+  },
+  "heic-to-png": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "68135876"
+  },
+  "image-metadata-viewer": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "143f5877"
+  },
+  "image-to-pdf": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "d5f4dbd1"
+  },
+  "increase-contrast": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "a61a571a"
+  },
+  "jpg-to-pdf": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "17b2eda8"
+  },
+  "jpg-to-png": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "710487bc"
+  },
+  "jpg-to-webp": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "7780f456"
+  },
+  "make-image-smaller": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "86d90603"
+  },
+  "make-jpg-smaller": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "d4738b02"
+  },
+  "png-to-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "691851b5"
+  },
+  "png-to-pdf": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "e9a65ed8"
+  },
+  "png-to-webp": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "12ee5045"
+  },
+  "reduce-image-size": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "0a740dde"
+  },
+  "remove-background": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "a3e02703"
+  },
+  "remove-exif": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "fbfa0c40"
+  },
+  "remove-image-metadata": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "f21fbe01"
+  },
+  "remove-metadata": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "37e0e8db"
+  },
+  "resize-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "2c090f9e"
+  },
+  "resize-image-by-pixels": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "e4a48f63"
+  },
+  "resize-image-to-1080x1080": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "bc661a1a"
+  },
+  "resize-image-to-1200x630": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "8bfa41f6"
+  },
+  "resize-image-to-1280x720": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "3b3a13bd"
+  },
+  "resize-image-to-1920x1080": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "60fea7df"
+  },
+  "resize-image-to-512x512": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "24fbab43"
+  },
+  "resize-image-to-800x800": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "382df656"
+  },
+  "resize-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "4b33f601"
+  },
+  "resize-png": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "c62f357f"
+  },
+  "rotate-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "ca56af6e"
+  },
+  "sharpen-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "f7fd46a4"
+  },
+  "tiff-to-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "e126e7ea"
+  },
+  "upscale-image": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "b6b4eab7"
+  },
+  "webp-to-jpg": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "125e2a46"
+  },
+  "webp-to-png": {
+    "lastmod": "2026-09-23",
+    "fingerprint": "4f7bd377"
+  }
+}

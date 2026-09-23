@@ -108,6 +108,30 @@ in Google, where people search in their own words, but the site's own search
 hides them when the canonical tool is already in the results — otherwise three
 ways of saying "compress" crowd out genuinely different tools.
 
+### Sitemap dates
+
+`<lastmod>` comes from `src/seo/lastmod.json`, which is committed to the
+repository and regenerated with `npm run lastmod`.
+
+The obvious implementation — `new Date()` at build time — tells Google that
+every page changed on every deploy, including the sixty nobody touched. Google
+treats lastmod as a hint and discounts sources that are perpetually "just
+modified", so it throws the signal away rather than causing harm. Either way
+it is wasted.
+
+Git commit dates were the other candidate and are also wrong: they describe
+the repository, not the page. Rebasing, squashing or a shallow CI clone
+rewrites them, which would jump the whole sitemap to one date — the same false
+signal from a different cause.
+
+So each page is hashed over the fields a visitor actually sees, and a date is
+recorded against that fingerprint. A page keeps its date until its content
+changes. `buildSitemap` never reads the clock, and a test asserts two builds
+are byte-identical.
+
+If you edit page copy and forget to regenerate, `lastmod.test.ts` fails and
+names the pages involved.
+
 ### Why the build prerenders
 
 A single-page app serves byte-identical HTML for every URL. For a site built on

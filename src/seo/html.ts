@@ -6,6 +6,7 @@
  */
 
 import type { PageMeta } from '@/tools/seo';
+import { HOME_KEY, lastmodFor } from './lastmod';
 
 /** Escapes text destined for an HTML attribute value. */
 export function escapeAttribute(value: string): string {
@@ -131,9 +132,25 @@ export function outputPathFor(path: string): string {
   return slug === '' ? 'index.html' : `${slug}/index.html`;
 }
 
+/**
+ * Derives a manifest key from a canonical URL, so the sitemap and the lastmod
+ * manifest cannot disagree about what a page is called.
+ */
+function slugFromCanonical(canonical: string): string {
+  const path = new URL(canonical).pathname;
+  const slug = path.replace(/^\/+/, '').replace(/\/+$/, '');
+  return slug === '' ? HOME_KEY : slug;
+}
+
 export function buildSitemap(pages: PageMeta[]): string {
   const urls = pages
-    .map((page) => `  <url>\n    <loc>${escapeText(page.canonical)}</loc>\n  </url>`)
+    .map((page) => {
+      const lastmod = lastmodFor(slugFromCanonical(page.canonical));
+      // A page with no recorded date omits the element rather than inventing
+      // one -- a wrong date is worse than no date.
+      const dateLine = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : '';
+      return `  <url>\n    <loc>${escapeText(page.canonical)}</loc>${dateLine}\n  </url>`;
+    })
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>

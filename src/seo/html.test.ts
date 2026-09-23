@@ -10,6 +10,7 @@ import {
   stripHoistedMetadata,
 } from './html';
 import { SITE_URL, allPageMeta, canonicalUrl, type PageMeta } from '@/tools/seo';
+import { lastmodFor } from './lastmod';
 import { TOOLS } from '@/tools/registry';
 
 const TEMPLATE = `<!doctype html>
@@ -147,6 +148,44 @@ describe('buildSitemap', () => {
 
   it('lists every page exactly once', () => {
     expect(sitemap.match(/<loc>/g)).toHaveLength(TOOLS.length + 1);
+  });
+
+  it('gives every page a lastmod date', () => {
+    expect(sitemap.match(/<lastmod>/g)).toHaveLength(TOOLS.length + 1);
+  });
+
+  it('reports each page its own recorded date', () => {
+    // Not "the dates must differ": on the first run every page is fingerprinted
+    // at once, so one shared date is correct and honest. What matters is that
+    // the date comes from the manifest rather than from the clock, so an
+    // untouched page keeps its date through later deploys. buildSitemap being
+    // byte-stable (below) is what actually proves that.
+    for (const page of allPageMeta()) {
+      const slug = new URL(page.canonical).pathname.replace(/^\/|\/$/g, '') || '/';
+      const expected = lastmodFor(slug);
+      expect(expected, `no recorded date for ${slug}`).toBeDefined();
+      expect(sitemap).toContain(
+        `<loc>${page.canonical}</loc>\n    <lastmod>${expected}</lastmod>`,
+      );
+    }
+  });
+
+  it('can carry different dates for different pages', () => {
+    // Proves dates are per-page rather than one value applied to all.
+    const single = buildSitemap([allPageMeta()[0]]);
+    expect(single.match(/<lastmod>/g)).toHaveLength(1);
+  });
+
+  it('emits dates as plain ISO days', () => {
+    for (const [, date] of sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)) {
+      expect(date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+
+  it('is byte-identical when built twice', () => {
+    // Nothing in here may read the clock: two builds of unchanged content must
+    // produce the same file, or every deploy claims the whole site changed.
+    expect(buildSitemap(allPageMeta())).toBe(sitemap);
   });
 
   it('lists absolute canonical URLs', () => {

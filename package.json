@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "lastmod": "node scripts/lastmod.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build && npm run build:prerender",
     "build:prerender": "vite build --ssr src/entry-prerender.tsx --outDir dist-prerender && node scripts/prerender.mjs",
