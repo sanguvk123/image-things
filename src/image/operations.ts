@@ -1,7 +1,10 @@
 import type { OutputFormat } from '@/tools/registry';
 import {
+  context2d,
+  createCanvas,
   drawToCanvas,
   encode,
+  fillBackgroundIfOpaque,
   preservedFormat,
   toResult,
   type LoadedImage,
@@ -144,5 +147,67 @@ export async function convertImage(
     height: image.height,
     format,
     sourceName: image.file.name,
+  });
+}
+
+/** Clockwise rotation in degrees. Only right angles — no arbitrary skewing. */
+export type RotationDegrees = 90 | 180 | 270;
+
+export async function rotateImage(
+  image: LoadedImage,
+  degrees: RotationDegrees,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  // A quarter turn swaps the canvas dimensions; a half turn does not.
+  const swap = degrees === 90 || degrees === 270;
+  const width = swap ? image.height : image.width;
+  const height = swap ? image.width : image.height;
+
+  const canvas = createCanvas(width, height);
+  const ctx = context2d(canvas);
+  fillBackgroundIfOpaque(ctx, format);
+
+  // Rotate about the canvas centre, then draw the image centred on the origin.
+  ctx.translate(width / 2, height / 2);
+  ctx.rotate((degrees * Math.PI) / 180);
+  ctx.drawImage(image.bitmap, -image.width / 2, -image.height / 2);
+
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+  return toResult(blob, {
+    width,
+    height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'rotated',
+  });
+}
+
+export interface FlipAxes {
+  horizontal: boolean;
+  vertical: boolean;
+}
+
+/** Mirror the image. Both axes can be flipped in a single pass. */
+export async function flipImage(
+  image: LoadedImage,
+  axes: FlipAxes,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const canvas = createCanvas(image.width, image.height);
+  const ctx = context2d(canvas);
+  fillBackgroundIfOpaque(ctx, format);
+
+  // Mirror by scaling negatively, then shifting back into view.
+  ctx.translate(axes.horizontal ? image.width : 0, axes.vertical ? image.height : 0);
+  ctx.scale(axes.horizontal ? -1 : 1, axes.vertical ? -1 : 1);
+  ctx.drawImage(image.bitmap, 0, 0);
+
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+  return toResult(blob, {
+    width: image.width,
+    height: image.height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'flipped',
   });
 }

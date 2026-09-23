@@ -7,13 +7,23 @@ interface ImagePreviewProps {
   onRemove: () => void;
   /** Optional live-preview source that replaces the original while adjusting. */
   overlayUrl?: string;
+  /** CSS transform previewing a pending change, e.g. "rotate(90deg)". */
+  previewTransform?: string;
+  /** CSS filter previewing a pending adjustment, e.g. "brightness(1.2)". */
+  previewFilter?: string;
 }
 
 /**
  * The universal image preview (spec §14): always the real image, never a
  * generic file icon, with the facts the user needs directly underneath.
  */
-export function ImagePreview({ image, onRemove, overlayUrl }: ImagePreviewProps) {
+export function ImagePreview({
+  image,
+  onRemove,
+  overlayUrl,
+  previewTransform,
+  previewFilter,
+}: ImagePreviewProps) {
   const label = badgeFor(image.file.type);
   // Built as one string so it reads as a single line to screen readers
   // instead of a stream of disconnected fragments.
@@ -31,7 +41,8 @@ export function ImagePreview({ image, onRemove, overlayUrl }: ImagePreviewProps)
         <img
           src={overlayUrl ?? image.previewUrl}
           alt={image.file.name}
-          className="max-h-[420px] w-auto max-w-full rounded-lg object-contain"
+          style={{ transform: previewTransform, filter: previewFilter }}
+          className="max-h-[420px] w-auto max-w-full rounded-lg object-contain transition-[transform,filter] duration-200"
         />
       </div>
 

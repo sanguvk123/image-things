@@ -4,6 +4,8 @@ import { CompressImage } from './tools/CompressImage';
 import { CompressToSize } from './tools/CompressToSize';
 import { ResizeImage } from './tools/ResizeImage';
 import { ConvertImage } from './tools/ConvertImage';
+import { RotateImage } from './tools/RotateImage';
+import { FlipImage } from './tools/FlipImage';
 
 /**
  * Maps a tool slug to its page component.
@@ -24,6 +26,8 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'webp-to-jpg': ConvertImage,
   'jpg-to-webp': ConvertImage,
   'png-to-webp': ConvertImage,
+  'rotate-image': RotateImage,
+  'flip-image': FlipImage,
 };
 
 export function ToolRoute() {

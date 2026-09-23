@@ -18,6 +18,10 @@ interface ToolLayoutProps {
   children?: ReactNode;
   /** Live-preview URL to show instead of the original while adjusting. */
   overlayUrl?: string;
+  /** CSS transform previewing a pending change, e.g. "rotate(90deg)". */
+  previewTransform?: string;
+  /** CSS filter previewing a pending adjustment, e.g. "brightness(1.2)". */
+  previewFilter?: string;
   resultNote?: string;
   hideSavings?: boolean;
   acceptHint?: string;
@@ -38,6 +42,8 @@ export function ToolLayout({
   onReset,
   children,
   overlayUrl,
+  previewTransform,
+  previewFilter,
   resultNote,
   hideSavings,
   acceptHint,
@@ -67,7 +73,13 @@ export function ToolLayout({
           />
         ) : image ? (
           <div className="space-y-7">
-            <ImagePreview image={image} onRemove={onReset} overlayUrl={overlayUrl} />
+            <ImagePreview
+              image={image}
+              onRemove={onReset}
+              overlayUrl={overlayUrl}
+              previewTransform={previewTransform}
+              previewFilter={previewFilter}
+            />
             {error && <ErrorNote>{error}</ErrorNote>}
             {children}
           </div>
