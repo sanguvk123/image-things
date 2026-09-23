@@ -875,6 +875,78 @@ export const TOOLS: Tool[] = [
 
   // ----------------------------------------------------------------- privacy
   {
+    slug: 'remove-exif',
+    title: 'Remove EXIF Data',
+    h1: 'Remove EXIF data from your photo',
+    tagline: 'Strip EXIF',
+    description:
+      'Remove the EXIF block your camera wrote into the photo, including any location.',
+    category: 'privacy',
+    keywords: ['exif', 'remove exif', 'strip exif', 'privacy', 'gps', 'camera data'],
+    seo: {
+      title: 'Remove EXIF Data From Photos — Free and Private',
+      description:
+        'Strip EXIF data, including GPS location, from your photos before sharing. Runs in your browser so the file is never uploaded.',
+    },
+  },
+  {
+    slug: 'remove-image-metadata',
+    title: 'Remove Image Metadata',
+    h1: 'Remove metadata from your image',
+    tagline: 'Clean the file',
+    description: 'Remove the hidden information stored inside your image file.',
+    category: 'privacy',
+    keywords: [
+      'image metadata',
+      'remove metadata',
+      'hidden data',
+      'clean',
+      'privacy',
+      'strip',
+    ],
+    seo: {
+      title: 'Remove Image Metadata Online — Free Tool',
+      description:
+        'Clear the hidden data stored inside an image file, from camera details to GPS location. Free, private, nothing uploaded.',
+    },
+  },
+  {
+    slug: 'image-metadata-viewer',
+    title: 'Metadata Viewer',
+    h1: 'See the metadata inside your image',
+    tagline: 'Inspect hidden data',
+    description:
+      'See exactly what your image file records about the camera, date and location.',
+    category: 'privacy',
+    keywords: [
+      'metadata viewer',
+      'view metadata',
+      'check metadata',
+      'inspect',
+      'see hidden data',
+      'what data',
+    ],
+    seo: {
+      title: 'Image Metadata Viewer — See Hidden Photo Data',
+      description:
+        'Check what your photo reveals about the camera, date and location before you share it. Nothing is uploaded anywhere.',
+    },
+  },
+  {
+    slug: 'exif-viewer',
+    title: 'EXIF Viewer',
+    h1: 'View the EXIF data in your photo',
+    tagline: 'Read EXIF tags',
+    description: 'Read the EXIF tags your camera wrote into the photo.',
+    category: 'privacy',
+    keywords: ['exif viewer', 'read exif', 'exif data', 'check exif', 'camera tags'],
+    seo: {
+      title: 'EXIF Viewer Online — Read Photo EXIF Data Free',
+      description:
+        'View the EXIF tags in any JPEG, including camera, lens settings, date and whether location data is attached. Free tool.',
+    },
+  },
+  {
     slug: 'remove-metadata',
     title: 'Remove Metadata',
     tagline: 'Strip EXIF data',

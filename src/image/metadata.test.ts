@@ -1,4 +1,64 @@
-import { detectMetadata, type MetadataCategory } from './metadata';
+import { detectMetadata, readMetadata, type MetadataCategory } from './metadata';
+
+/**
+ * Build a JPEG whose EXIF entries carry real ASCII values, so the viewer's
+ * value decoding can be tested rather than just tag detection.
+ */
+function jpegWithExifValues(tags: { id: number; value: string }[]): File {
+  const entryBytes = tags.length * 12;
+  // Values longer than 4 bytes live in a heap after the IFD.
+  const heap = tags.filter((tag) => tag.value.length + 1 > 4);
+  const heapBytes = heap.reduce((sum, tag) => sum + tag.value.length + 1, 0);
+  const tiffLength = 8 + 2 + entryBytes + 4 + heapBytes;
+  const app1Length = 2 + 6 + tiffLength;
+  const buffer = new ArrayBuffer(2 + 2 + app1Length);
+  const view = new DataView(buffer);
+
+  let offset = 0;
+  view.setUint16(offset, 0xffd8);
+  offset += 2;
+  view.setUint16(offset, 0xffe1);
+  offset += 2;
+  view.setUint16(offset, app1Length);
+  offset += 2;
+  view.setUint32(offset, 0x45786966);
+  view.setUint16(offset + 4, 0x0000);
+  offset += 6;
+
+  const tiffStart = offset;
+  view.setUint16(offset, 0x4d4d); // big-endian
+  view.setUint16(offset + 2, 42);
+  view.setUint32(offset + 4, 8);
+  offset += 8;
+
+  view.setUint16(offset, tags.length);
+  offset += 2;
+
+  let heapOffset = 2 + entryBytes + 4 + 8;
+
+  for (const tag of tags) {
+    const bytes = tag.value.length + 1;
+    view.setUint16(offset, tag.id);
+    view.setUint16(offset + 2, 2); // ASCII
+    view.setUint32(offset + 4, bytes);
+
+    if (bytes <= 4) {
+      for (let i = 0; i < tag.value.length; i += 1) {
+        view.setUint8(offset + 8 + i, tag.value.charCodeAt(i));
+      }
+    } else {
+      view.setUint32(offset + 8, heapOffset);
+      for (let i = 0; i < tag.value.length; i += 1) {
+        view.setUint8(tiffStart + heapOffset + i, tag.value.charCodeAt(i));
+      }
+      heapOffset += bytes;
+    }
+    offset += 12;
+  }
+
+  view.setUint32(offset, 0);
+  return new File([buffer], 'photo.jpg', { type: 'image/jpeg' });
+}
 
 /**
  * Build a minimal JPEG containing an EXIF APP1 segment with the given tags.
@@ -102,5 +162,72 @@ describe('detectMetadata', () => {
     });
 
     await expect(detectMetadata(truncated)).resolves.toEqual([]);
+  });
+});
+
+describe('readMetadata', () => {
+  test('reads a short value stored inline in the entry', async () => {
+    // Values of four bytes or fewer live in the entry itself.
+    const file = jpegWithExifValues([{ id: 0x010f, value: 'HTC' }]);
+
+    await expect(readMetadata(file)).resolves.toEqual([
+      { label: 'Camera make', value: 'HTC', category: 'Camera' },
+    ]);
+  });
+
+  test('reads a long value stored outside the entry', async () => {
+    // Anything longer is stored in the heap and referenced by offset; getting
+    // this wrong is the classic EXIF parsing bug.
+    const file = jpegWithExifValues([{ id: 0x0110, value: 'iPhone 15 Pro' }]);
+
+    await expect(readMetadata(file)).resolves.toEqual([
+      { label: 'Camera model', value: 'iPhone 15 Pro', category: 'Device information' },
+    ]);
+  });
+
+  test('reads several entries and labels each in plain English', async () => {
+    const file = jpegWithExifValues([
+      { id: 0x010f, value: 'Canon' },
+      { id: 0x0110, value: 'EOS R6' },
+      { id: 0x9003, value: '2024:03:11 09:15:22' },
+    ]);
+
+    await expect(readMetadata(file)).resolves.toEqual([
+      { label: 'Camera make', value: 'Canon', category: 'Camera' },
+      { label: 'Camera model', value: 'EOS R6', category: 'Device information' },
+      { label: 'Date taken', value: '2024:03:11 09:15:22', category: 'Date' },
+    ]);
+  });
+
+  test('reports location as present rather than as raw coordinates', async () => {
+    // The GPS tag points at another IFD. That location data exists at all is
+    // the part that matters to someone about to share the photo.
+    const file = jpegWithExifValues([{ id: 0x8825, value: 'x' }]);
+
+    await expect(readMetadata(file)).resolves.toEqual([
+      { label: 'Location data', value: 'Present', category: 'GPS' },
+    ]);
+  });
+
+  test('ignores tags it has no label for', async () => {
+    const file = jpegWithExifValues([{ id: 0x0112, value: '1' }]);
+
+    await expect(readMetadata(file)).resolves.toEqual([]);
+  });
+
+  test('returns nothing for an image with no EXIF at all', async () => {
+    const bare = new File([new Uint8Array([0xff, 0xd8, 0xff, 0xd9])], 'bare.jpg', {
+      type: 'image/jpeg',
+    });
+
+    await expect(readMetadata(bare)).resolves.toEqual([]);
+  });
+
+  test('does not throw on a truncated file', async () => {
+    const truncated = new File([new Uint8Array([0xff, 0xd8])], 'cut.jpg', {
+      type: 'image/jpeg',
+    });
+
+    await expect(readMetadata(truncated)).resolves.toEqual([]);
   });
 });

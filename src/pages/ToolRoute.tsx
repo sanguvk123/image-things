@@ -20,6 +20,7 @@ import {
 import { GrayscaleImage } from './tools/GrayscaleImage';
 import { SharpenImage } from './tools/SharpenImage';
 import { RemoveMetadata } from './tools/RemoveMetadata';
+import { ViewMetadata } from './tools/ViewMetadata';
 import { ImageToPdf } from './tools/ImageToPdf';
 import { UpscaleImage } from './tools/UpscaleImage';
 import { RemoveBackground } from './tools/RemoveBackground';
@@ -81,6 +82,10 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'blur-image': BlurImage,
   'sharpen-image': SharpenImage,
   'remove-metadata': RemoveMetadata,
+  'remove-exif': RemoveMetadata,
+  'remove-image-metadata': RemoveMetadata,
+  'image-metadata-viewer': ViewMetadata,
+  'exif-viewer': ViewMetadata,
   'image-to-pdf': ImageToPdf,
   'upscale-image': UpscaleImage,
   'remove-background': RemoveBackground,
