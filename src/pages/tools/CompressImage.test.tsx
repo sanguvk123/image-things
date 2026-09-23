@@ -1,8 +1,7 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { ToolRoute } from '../ToolRoute';
 import { installCanvasStubs, fakeImageFile, type CanvasStub } from '@/test/canvas';
+import { choosePhoto, renderTool } from '@/test/tool';
 
 let canvas: CanvasStub;
 
@@ -12,25 +11,11 @@ beforeEach(() => {
 
 afterEach(() => canvas.restore());
 
-function renderTool(slug = 'compress-image') {
-  return render(
-    <MemoryRouter initialEntries={[`/${slug}`]}>
-      <Routes>
-        <Route path="/:slug" element={<ToolRoute />} />
-      </Routes>
-    </MemoryRouter>,
-  );
-}
-
-async function uploadPhoto(user: ReturnType<typeof userEvent.setup>) {
-  const file = fakeImageFile('photo.jpg', 2_800_000);
-  await user.upload(screen.getByLabelText('Choose image'), file);
-  return file;
-}
+const uploadPhoto = choosePhoto;
 
 describe('Compress Image', () => {
   test('starts with the upload area, not a form', () => {
-    renderTool();
+    renderTool('compress-image');
 
     expect(
       screen.getByRole('heading', { level: 1, name: 'Compress Image' }),
@@ -42,7 +27,7 @@ describe('Compress Image', () => {
 
   test('choosing an image immediately shows its name, size and dimensions', async () => {
     const user = userEvent.setup();
-    renderTool();
+    renderTool('compress-image');
     await uploadPhoto(user);
 
     // Spec §4: the facts appear straight away, with no upload wait.
@@ -52,7 +37,7 @@ describe('Compress Image', () => {
 
   test('defaults to the Recommended compression level', async () => {
     const user = userEvent.setup();
-    renderTool();
+    renderTool('compress-image');
     await uploadPhoto(user);
 
     expect(await screen.findByRole('radio', { name: /recommended/i })).toBeChecked();
@@ -61,7 +46,7 @@ describe('Compress Image', () => {
 
   test('compressing produces a downloadable, smaller result', async () => {
     const user = userEvent.setup();
-    renderTool();
+    renderTool('compress-image');
     await uploadPhoto(user);
 
     await user.click(await screen.findByRole('button', { name: 'Compress Image' }));
@@ -73,7 +58,7 @@ describe('Compress Image', () => {
 
   test('the chosen level changes the encoder quality', async () => {
     const user = userEvent.setup();
-    renderTool();
+    renderTool('compress-image');
     await uploadPhoto(user);
 
     await user.click(await screen.findByRole('radio', { name: /smaller/i }));
@@ -88,7 +73,7 @@ describe('Compress Image', () => {
 
   test('start over returns to the upload area', async () => {
     const user = userEvent.setup();
-    renderTool();
+    renderTool('compress-image');
     await uploadPhoto(user);
 
     await user.click(await screen.findByRole('button', { name: 'Compress Image' }));
@@ -102,7 +87,7 @@ describe('Compress Image', () => {
     globalThis.createImageBitmap = (() =>
       Promise.reject(new Error('decode failed'))) as unknown as typeof createImageBitmap;
 
-    renderTool();
+    renderTool('compress-image');
     await user.upload(
       screen.getByLabelText('Choose image'),
       fakeImageFile('broken.jpg'),

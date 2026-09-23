@@ -103,3 +103,24 @@ export async function compressToTargetSize(
     }),
   };
 }
+
+/** Quality for tools whose job is not compression. High enough to be invisible. */
+const EDIT_QUALITY = 0.92;
+
+export async function resizeImage(
+  image: LoadedImage,
+  width: number,
+  height: number,
+): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const { canvas } = drawToCanvas(image.bitmap, width, height, format);
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+
+  return toResult(blob, {
+    width: canvas.width,
+    height: canvas.height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'resized',
+  });
+}

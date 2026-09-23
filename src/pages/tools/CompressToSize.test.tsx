@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { ToolRoute } from '../ToolRoute';
-import { installCanvasStubs, fakeImageFile, type CanvasStub } from '@/test/canvas';
+import { installCanvasStubs, type CanvasStub } from '@/test/canvas';
+import { choosePhoto as uploadPhoto, renderTool } from '@/test/tool';
 
 let canvas: CanvasStub;
 
@@ -19,23 +18,6 @@ beforeEach(() => {
 });
 
 afterEach(() => canvas.restore());
-
-function renderTool(slug: string) {
-  return render(
-    <MemoryRouter initialEntries={[`/${slug}`]}>
-      <Routes>
-        <Route path="/:slug" element={<ToolRoute />} />
-      </Routes>
-    </MemoryRouter>,
-  );
-}
-
-async function uploadPhoto(user: ReturnType<typeof userEvent.setup>) {
-  await user.upload(
-    screen.getByLabelText('Choose image'),
-    fakeImageFile('photo.jpg', 2_800_000),
-  );
-}
 
 describe('Compress to exact size', () => {
   test('a size-specific tool arrives with its target already selected', async () => {
