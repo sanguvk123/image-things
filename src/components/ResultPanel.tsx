@@ -22,6 +22,7 @@ export function ResultPanel({
   hideSavings = false,
 }: ResultPanelProps) {
   const saved = percentSmaller(originalBytes, result.blob.size);
+  const dimensions = `${result.width} × ${result.height}`;
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-6">
@@ -33,14 +34,28 @@ export function ResultPanel({
         />
       </div>
 
-      <div className="mt-5 text-center">
-        {/* One string per line so the summary reads as a sentence, not as
-            disconnected fragments, to both users and assistive tech. */}
+      {/*
+        The result replaces the controls in place, with no navigation and no
+        focus change, so without a live region a screen reader user presses
+        the button and hears nothing at all.
+
+        role="status" is polite by default: it waits for a pause rather than
+        cutting off whatever is being read. The whole summary is one region so
+        it is announced as a single sentence instead of three fragments.
+      */}
+      <div role="status" className="mt-5 text-center">
         <p className="tabular text-lg text-ink">
           {hideSavings
-            ? `${result.width} × ${result.height} · ${formatBytes(result.blob.size)}`
+            ? `${dimensions} · ${formatBytes(result.blob.size)}`
             : `${formatBytes(originalBytes)} → ${formatBytes(result.blob.size)}`}
         </p>
+
+        {/*
+          Dimensions matter even when the size change is the headline: someone
+          compressing for an upload limit needs to know the image was not
+          quietly downscaled to get there.
+        */}
+        {!hideSavings && <p className="tabular mt-1 text-sm text-ink-faint">{dimensions}</p>}
 
         {note ? (
           <p className="mt-1.5 text-sm text-good">{note}</p>
@@ -50,6 +65,10 @@ export function ResultPanel({
             <p className="mt-1.5 text-sm text-good">{saved}% smaller</p>
           )
         )}
+
+        {/* Names the outcome. A bare "40 KB" read aloud says nothing about
+            whether the operation actually finished. */}
+        <span className="sr-only">Ready to download.</span>
       </div>
 
       <div className="mt-6 flex flex-col items-center gap-3">
