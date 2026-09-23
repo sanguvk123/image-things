@@ -7,7 +7,11 @@ import { BYTES_PER_KB, formatBytes } from '@/image/format';
 import type { Tool } from '@/tools/registry';
 
 /** Quick presets so the common cases need no typing at all (spec §17). */
-const PRESETS_KB = [50, 100, 200, 500, 1000];
+const PRESETS_KB = [50, 100, 200, 300, 500, 1000];
+
+function sizeLabel(kb: number): string {
+  return kb >= 1000 ? `${kb / 1000} MB` : `${kb} KB`;
+}
 
 export function CompressToSize({ tool }: { tool: Tool }) {
   const { image, result, busy, error, selectFile, run, reset } = useImageTool();
@@ -34,6 +38,14 @@ export function CompressToSize({ tool }: { tool: Tool }) {
       : `✓ Under ${formatBytes(targetBytes)}`
     : undefined;
 
+  // Hitting an exact byte budget requires JPEG, so a PNG page has to say up
+  // front that transparency will not survive. Better than a silent surprise
+  // after the download.
+  const transparencyWarning =
+    tool.sourceLabel === 'PNG'
+      ? 'Saved as JPG to reach this size. Transparent areas become white.'
+      : undefined;
+
   return (
     <ToolLayout
       tool={tool}
@@ -44,15 +56,19 @@ export function CompressToSize({ tool }: { tool: Tool }) {
       onReset={reset}
       resultNote={note}
     >
+      {transparencyWarning && (
+        <p className="text-sm text-ink-faint">{transparencyWarning}</p>
+      )}
+
       <PillGroup legend="Target size">
         {PRESETS_KB.map((kb) => (
           <Pill
             key={kb}
             selected={targetKB === kb}
             onClick={() => setTargetKB(kb)}
-            label={kb >= 1000 ? '1 MB' : `${kb} KB`}
+            label={sizeLabel(kb)}
           >
-            {kb >= 1000 ? '1 MB' : `${kb} KB`}
+            {sizeLabel(kb)}
           </Pill>
         ))}
       </PillGroup>

@@ -20,6 +20,20 @@ const SCORE = {
   keywordPrefix: 18,
   keywordContains: 10,
   taglineContains: 6,
+  /**
+   * Charged to a format-specific page when the query never mentions that
+   * format. Someone typing "100kb" has not said JPG, so "Compress to 100KB"
+   * must beat "Compress JPG to 100KB" -- otherwise the long tail of landing
+   * pages buries the general tool the user actually asked for.
+   */
+  unmatchedFormat: 15,
+  /**
+   * Charged to a size-preset page when the query names no size. The
+   * compress-to-N family exists for search traffic; on a vague query like
+   * "smaller" they would otherwise fill every slot with six near-identical
+   * entries and hide genuinely different tools such as Resize.
+   */
+  unmatchedTarget: 12,
 } as const;
 
 /** Lowercase, collapse whitespace, and drop characters users don't mean. */
@@ -66,6 +80,11 @@ function scoreTool(tool: Tool, term: string): number {
   return score;
 }
 
+/** Whether a term looks like a size the user typed, e.g. "100kb" or "2mb". */
+function mentionsASize(term: string): boolean {
+  return /\d/.test(term) || term === 'kb' || term === 'mb';
+}
+
 /**
  * Returns tools matching `query`, best match first.
  *
@@ -92,7 +111,17 @@ export function searchTools(query: string, limit = 8): Tool[] {
       total += termScore;
     }
 
-    if (matchedEveryTerm) scored.push({ tool, score: total });
+    if (!matchedEveryTerm) continue;
+
+    // Prefer the general tool unless the query earns the specific one.
+    const format = tool.sourceLabel ? normalize(tool.sourceLabel) : null;
+    if (format && !terms.includes(format)) total -= SCORE.unmatchedFormat;
+
+    if (tool.targetKB && !terms.some(mentionsASize)) {
+      total -= SCORE.unmatchedTarget;
+    }
+
+    scored.push({ tool, score: total });
   }
 
   return scored

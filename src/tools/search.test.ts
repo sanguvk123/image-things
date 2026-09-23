@@ -33,7 +33,16 @@ describe('searchTools', () => {
     const results = slugs('smaller');
     expect(results).toContain('compress-image');
     expect(results).toContain('resize-image');
-    expect(results).toContain('compress-image-to-100kb');
+    expect(results).toContain('compress-image-to-size');
+  });
+
+  test('a vague query is not buried under the size-preset family', () => {
+    // There are six compress-to-N pages. Without a penalty they fill every
+    // slot and hide genuinely different tools.
+    const results = slugs('smaller');
+    const presets = results.filter((slug) => /compress-image-to-\d/.test(slug));
+    expect(presets.length).toBeLessThanOrEqual(2);
+    expect(results.indexOf('resize-image')).toBeLessThan(3);
   });
 
   test('"jpg" surfaces the JPG conversion family', () => {
@@ -59,6 +68,24 @@ describe('searchTools', () => {
 
   test('"100kb" finds the exact-size tool', () => {
     expect(slugs('100kb')[0]).toBe('compress-image-to-100kb');
+  });
+
+  test('a query naming no format prefers the general tool', () => {
+    // "100kb" says nothing about JPG, so the format-specific landing page
+    // must not outrank the one the user actually described.
+    const results = slugs('100kb');
+    expect(results.indexOf('compress-image-to-100kb')).toBeLessThan(
+      results.indexOf('compress-jpg-to-100kb'),
+    );
+  });
+
+  test('naming a format promotes that format page', () => {
+    expect(slugs('compress jpg')[0]).toBe('compress-jpg');
+    expect(slugs('compress png')[0]).toBe('compress-png');
+  });
+
+  test('naming both a format and a size finds that exact page', () => {
+    expect(slugs('jpg 100kb')[0]).toBe('compress-jpg-to-100kb');
   });
 
   test('"remove bg" matches across word gaps', () => {

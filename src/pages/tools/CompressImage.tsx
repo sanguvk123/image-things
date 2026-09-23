@@ -17,7 +17,11 @@ const LEVELS: Option<CompressionLevel>[] = [
 
 export function CompressImage({ tool }: { tool: Tool }) {
   const { image, result, busy, error, selectFile, run, reset } = useImageTool();
-  const [level, setLevel] = useState<CompressionLevel>('recommended');
+  // A page like /compress-image-without-losing-quality must open already set
+  // to the promise its title makes.
+  const [level, setLevel] = useState<CompressionLevel>(
+    tool.defaultCompression ?? 'recommended',
+  );
 
   return (
     <ToolLayout
@@ -36,7 +40,7 @@ export function CompressImage({ tool }: { tool: Tool }) {
       />
 
       <ActionButton busy={busy} onClick={() => run((img) => compressImage(img, level))}>
-        Compress Image
+        {tool.sourceLabel ? `Compress ${tool.sourceLabel}` : 'Compress Image'}
       </ActionButton>
     </ToolLayout>
   );

@@ -15,6 +15,9 @@ export type OutputFormat = 'jpeg' | 'png' | 'webp';
 
 export type ToolCategory = 'optimize' | 'convert' | 'transform' | 'adjust' | 'privacy';
 
+/** Compression presets, mirrored in operations.ts as CompressionLevel. */
+export type CompressionPreset = 'smaller' | 'recommended' | 'best';
+
 /** Search-result copy. Both fields are length-checked by seo.test.ts. */
 export interface ToolSeo {
   /** <title>, kept under 60 characters so Google shows it in full. */
@@ -47,6 +50,15 @@ export interface Tool {
   popular?: boolean;
   /** Preset target for the "compress to N KB" family. */
   targetKB?: number;
+  /**
+   * The input format a landing page is written for, e.g. 'JPG' on
+   * /compress-jpg. Only changes copy -- every tool still accepts any image,
+   * because turning away a PNG on a page titled "Compress JPG" would be
+   * hostile to someone who simply picked the wrong link.
+   */
+  sourceLabel?: string;
+  /** Preselected compression preset, for intent-specific landing pages. */
+  defaultCompression?: CompressionPreset;
   /** Format conversion pair, set only for conversion tools. */
   convert?: { fromLabel: string; to: OutputFormat };
   /** Search-result copy. Required: see the SEO rule above. */
@@ -150,6 +162,21 @@ export const TOOLS: Tool[] = [
     },
   },
   {
+    slug: 'compress-image-to-300kb',
+    title: 'Compress to 300KB',
+    h1: 'Compress your image to 300KB',
+    tagline: 'Exact target size',
+    description: 'Compress your image to under 300KB.',
+    category: 'optimize',
+    keywords: ['smaller', '300kb', 'target size', 'exact size', 'upload limit'],
+    targetKB: 300,
+    seo: {
+      title: 'Compress Image to 300KB Online — Free Tool',
+      description:
+        'Reduce your photo to under 300KB while keeping detail sharp. A good balance for uploads that allow a moderate file size.',
+    },
+  },
+  {
     slug: 'compress-image-to-500kb',
     title: 'Compress to 500KB',
     h1: 'Compress your image to 500KB',
@@ -162,6 +189,158 @@ export const TOOLS: Tool[] = [
       title: 'Compress Image to 500KB Online — Free Tool',
       description:
         'Bring large photos under 500KB with barely visible quality loss. Ideal for email attachments and website uploads. No signup.',
+    },
+  },
+  {
+    slug: 'compress-image-to-1mb',
+    title: 'Compress to 1MB',
+    h1: 'Compress your image to 1MB',
+    tagline: 'Exact target size',
+    description: 'Compress your image to under 1MB.',
+    category: 'optimize',
+    keywords: ['smaller', '1mb', '1 mb', 'target size', 'exact size', 'upload limit'],
+    targetKB: 1000,
+    seo: {
+      title: 'Compress Image to 1MB Online — Free Tool',
+      description:
+        'Get a large photo under 1MB with almost no visible quality loss. Ideal for email limits and high quality web uploads. Free.',
+    },
+  },
+
+  // Format-specific compression. Same engine, copy written for the search
+  // term; every page still accepts any image the user happens to drop in.
+  {
+    slug: 'compress-jpg',
+    title: 'Compress JPG',
+    h1: 'Compress your JPG',
+    tagline: 'Reduce JPG size',
+    description: 'Reduce the file size of your JPG without visible quality loss.',
+    category: 'optimize',
+    keywords: ['jpg', 'jpeg', 'smaller', 'compressor', 'reduce', 'file size'],
+    sourceLabel: 'JPG',
+    seo: {
+      title: 'Compress JPG Online — Free JPEG Compressor',
+      description:
+        'Shrink JPG and JPEG photos fast while keeping them sharp. Choose how much to compress and see the saving before you download.',
+    },
+  },
+  {
+    slug: 'compress-png',
+    title: 'Compress PNG',
+    h1: 'Compress your PNG',
+    tagline: 'Reduce PNG size',
+    description: 'Make your PNG dramatically smaller.',
+    category: 'optimize',
+    keywords: ['png', 'smaller', 'compressor', 'reduce', 'file size', 'transparent'],
+    sourceLabel: 'PNG',
+    seo: {
+      title: 'Compress PNG Online — Free PNG Compressor',
+      description:
+        'Make PNG files much smaller in one click. Great for screenshots and web images that are slowing your page down. Free and private.',
+    },
+  },
+  {
+    slug: 'compress-webp',
+    title: 'Compress WebP',
+    h1: 'Compress your WebP',
+    tagline: 'Reduce WebP size',
+    description: 'Reduce the file size of your WebP image.',
+    category: 'optimize',
+    keywords: ['webp', 'smaller', 'compressor', 'reduce', 'file size'],
+    sourceLabel: 'WebP',
+    seo: {
+      title: 'Compress WebP Online — Free WebP Compressor',
+      description:
+        'Squeeze WebP images down further while keeping them crisp. Useful for speeding up an already optimised website. Free tool.',
+    },
+  },
+  {
+    slug: 'compress-image-without-losing-quality',
+    title: 'Compress Without Quality Loss',
+    h1: 'Compress your image without losing quality',
+    tagline: 'Maximum quality',
+    description:
+      'Reduce your file size while keeping the image visually identical to the original.',
+    category: 'optimize',
+    keywords: [
+      'without losing quality',
+      'no quality loss',
+      'lossless',
+      'high quality',
+      'smaller',
+      'keep quality',
+    ],
+    // The whole promise of this page is quality, so it opens on 'best'
+    // rather than the usual 'recommended'.
+    defaultCompression: 'best',
+    seo: {
+      title: 'Compress Image Without Losing Quality — Free',
+      description:
+        'Reduce image file size while keeping it looking identical. Uses the highest quality setting so the difference stays invisible.',
+    },
+  },
+  {
+    slug: 'compress-jpg-to-100kb',
+    title: 'Compress JPG to 100KB',
+    h1: 'Compress your JPG to 100KB',
+    tagline: 'Exact target size',
+    description: 'Compress your JPG to under 100KB.',
+    category: 'optimize',
+    keywords: ['jpg', 'jpeg', '100kb', 'target size', 'upload limit', 'smaller'],
+    targetKB: 100,
+    sourceLabel: 'JPG',
+    seo: {
+      title: 'Compress JPG to 100KB Online — Free Tool',
+      description:
+        'Get your JPG under 100KB in one click. Built for upload limits on application forms and government portals. Free and private.',
+    },
+  },
+  {
+    slug: 'compress-jpg-to-200kb',
+    title: 'Compress JPG to 200KB',
+    h1: 'Compress your JPG to 200KB',
+    tagline: 'Exact target size',
+    description: 'Compress your JPG to under 200KB.',
+    category: 'optimize',
+    keywords: ['jpg', 'jpeg', '200kb', 'target size', 'upload limit', 'smaller'],
+    targetKB: 200,
+    sourceLabel: 'JPG',
+    seo: {
+      title: 'Compress JPG to 200KB Online — Free Tool',
+      description:
+        'Reduce your JPG to under 200KB while keeping it clear enough to read and print. Ideal for document and photo uploads.',
+    },
+  },
+  {
+    slug: 'compress-jpg-to-500kb',
+    title: 'Compress JPG to 500KB',
+    h1: 'Compress your JPG to 500KB',
+    tagline: 'Exact target size',
+    description: 'Compress your JPG to under 500KB.',
+    category: 'optimize',
+    keywords: ['jpg', 'jpeg', '500kb', 'target size', 'upload limit', 'smaller'],
+    targetKB: 500,
+    sourceLabel: 'JPG',
+    seo: {
+      title: 'Compress JPG to 500KB Online — Free Tool',
+      description:
+        'Bring a large JPG under 500KB with barely any visible change. Good for email attachments and website uploads. No signup.',
+    },
+  },
+  {
+    slug: 'compress-png-to-100kb',
+    title: 'Compress PNG to 100KB',
+    h1: 'Compress your PNG to 100KB',
+    tagline: 'Exact target size',
+    description: 'Compress your PNG to under 100KB.',
+    category: 'optimize',
+    keywords: ['png', '100kb', 'target size', 'upload limit', 'smaller'],
+    targetKB: 100,
+    sourceLabel: 'PNG',
+    seo: {
+      title: 'Compress PNG to 100KB Online — Free Tool',
+      description:
+        'Get a PNG under 100KB for strict upload limits. Saved as JPG, since PNG cannot reach that size for most photos. Free tool.',
     },
   },
 
