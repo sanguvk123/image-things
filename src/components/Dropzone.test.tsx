@@ -23,6 +23,12 @@ function transferWith(files: File[]) {
 const dropzone = () => screen.getByText('Drop image here').closest('div')!;
 
 describe('drag and drop', () => {
+  // The drag highlight is an applied class, not a substring. Matching on
+  // substrings confused `border-accent` with the `hover:border-accent/50`
+  // variant, which meant the "cleared" assertion could never fail.
+  const isHighlighted = (zone: HTMLElement) =>
+    zone.classList.contains('border-accent');
+
   test('the interface reacts the moment a file is dragged over it', () => {
     renderTool('compress-image');
     const zone = dropzone();
@@ -30,7 +36,7 @@ describe('drag and drop', () => {
     fireEvent.dragEnter(zone, { dataTransfer: transferWith([fakeImageFile()]) });
 
     // Spec §12: "The interface should immediately react."
-    expect(zone.className).toContain('border-accent');
+    expect(isHighlighted(zone)).toBe(true);
   });
 
   test('the highlight clears when the file is dragged away again', () => {
@@ -39,9 +45,10 @@ describe('drag and drop', () => {
     const dataTransfer = transferWith([fakeImageFile()]);
 
     fireEvent.dragEnter(zone, { dataTransfer });
-    fireEvent.dragLeave(zone, { dataTransfer });
+    expect(isHighlighted(zone)).toBe(true);
 
-    expect(zone.className).not.toContain('border-accent');
+    fireEvent.dragLeave(zone, { dataTransfer });
+    expect(isHighlighted(zone)).toBe(false);
   });
 
   test('dropping an image loads it', async () => {

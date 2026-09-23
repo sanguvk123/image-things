@@ -1100,6 +1100,37 @@ export function popularTools(): Tool[] {
   return TOOLS.filter((tool) => tool.popular);
 }
 
+/** Display order and headings for the homepage directory. */
+export const CATEGORY_ORDER: ToolCategory[] = [
+  'optimize',
+  'convert',
+  'transform',
+  'adjust',
+  'privacy',
+];
+
+export const CATEGORY_LABELS: Record<ToolCategory, string> = {
+  optimize: 'Compress & optimize',
+  convert: 'Convert format',
+  transform: 'Resize & transform',
+  adjust: 'Adjust & edit',
+  privacy: 'Privacy & cleanup',
+};
+
+/**
+ * Every tool grouped by category, for the homepage directory.
+ *
+ * Alias pages are excluded. They exist to match how people phrase things in
+ * Google, but listing "Reduce Image Size" beside "Compress Image" on the site
+ * itself would present one tool as three and make the page harder to scan.
+ */
+export function toolsByCategory(): { category: ToolCategory; tools: Tool[] }[] {
+  return CATEGORY_ORDER.map((category) => ({
+    category,
+    tools: TOOLS.filter((tool) => tool.category === category && !tool.aliasOf),
+  })).filter((group) => group.tools.length > 0);
+}
+
 /** The on-page heading for a tool, falling back to its card title. */
 export function headingFor(tool: Tool): string {
   return tool.h1 ?? tool.title;

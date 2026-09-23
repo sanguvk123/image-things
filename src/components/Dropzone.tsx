@@ -76,25 +76,25 @@ export function Dropzone({
         if (dragDepth.current <= 0) setIsDragging(false);
       }}
       onDrop={handleDrop}
-      className={`flex flex-col items-center justify-center rounded-3xl border border-dashed px-6 py-16 text-center transition-all duration-200 ${
+      className={`flex flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-10 text-center transition-all duration-200 ${
         isDragging
           ? 'scale-[1.01] border-accent bg-accent-soft'
-          : 'border-line-strong bg-surface'
+          : 'border-line-strong bg-surface hover:border-accent/50 hover:bg-accent-soft/30'
       }`}
     >
       <UploadIcon active={isDragging} />
 
-      <p className="mt-4 text-[15px] text-ink">Drop image here</p>
+      <p className="mt-3 text-[15px] text-ink">Drop image here</p>
 
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="mt-4 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white transition-transform duration-150 hover:scale-[1.02] active:scale-[0.99]"
+        className="mt-3 rounded-full bg-gradient-to-r from-accent to-convert px-5 py-2.5 text-sm font-medium text-white shadow-[0_4px_14px_-4px_rgba(10,132,255,0.5)] transition-transform duration-150 hover:scale-[1.02] active:scale-[0.99]"
       >
         {multiple ? 'Choose images' : 'Choose image'}
       </button>
 
-      <p className="mt-5 text-xs text-ink-faint">{hint}</p>
+      <p className="mt-4 text-xs text-ink-faint">{hint}</p>
       <p className="mt-1 text-xs text-ink-faint">or paste from your clipboard</p>
 
       <input
@@ -118,8 +118,8 @@ export function Dropzone({
 function UploadIcon({ active }: { active: boolean }) {
   return (
     <svg
-      width="26"
-      height="26"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

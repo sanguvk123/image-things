@@ -15,6 +15,25 @@
   --color-accent-soft: #eaf3ff;
   --color-good: #12946b;
 
+  /*
+   * One hue per tool category, so colour carries meaning instead of
+   * decoration: the same family always looks the same, and a user scanning
+   * the grid can tell compression from conversion before reading a word.
+   *
+   * Each -ink shade is the icon/text colour and is contrast-checked against
+   * its own -soft tint, which is the icon tile background.
+   */
+  --color-optimize: #2f6bff;
+  --color-optimize-soft: #eaf0ff;
+  --color-convert: #7c3aed;
+  --color-convert-soft: #f3ecff;
+  --color-transform: #0d9488;
+  --color-transform-soft: #e3f7f4;
+  --color-adjust: #db6e00;
+  --color-adjust-soft: #fdf0e0;
+  --color-privacy: #d0357f;
+  --color-privacy-soft: #fdebf4;
+
   --radius-xl2: 18px;
 
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);

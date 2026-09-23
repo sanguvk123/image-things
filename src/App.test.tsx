@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from './App';
+import { CATEGORY_LABELS, TOOLS } from '@/tools/registry';
 
 // BrowserRouter reads jsdom's shared history, so a test that navigates would
 // otherwise leak its URL into the next test.
@@ -21,12 +22,52 @@ describe('homepage', () => {
 
   test('shows a grid of popular tools that link to their pages', () => {
     render(<App />);
-    const grid = screen.getByRole('link', { name: /compress image/i });
-    expect(grid).toHaveAttribute('href', '/compress-image');
-    expect(screen.getByRole('link', { name: /resize image/i })).toHaveAttribute(
+    // Scoped to the popular section: these tools also appear in the full
+    // directory below, so an unscoped query matches twice.
+    const popular = within(
+      screen.getByRole('region', { name: /popular tools/i }),
+    );
+    expect(popular.getByRole('link', { name: /compress image/i })).toHaveAttribute(
+      'href',
+      '/compress-image',
+    );
+    expect(popular.getByRole('link', { name: /resize image/i })).toHaveAttribute(
       'href',
       '/resize-image',
     );
+  });
+
+  test('lists every non-alias tool in the directory', () => {
+    render(<App />);
+    const directory = within(screen.getByRole('region', { name: /all tools/i }));
+    const expected = TOOLS.filter((tool) => !tool.aliasOf);
+
+    for (const tool of expected) {
+      expect(
+        directory.getByRole('link', { name: new RegExp(`^${tool.title}$`, 'i') }),
+      ).toHaveAttribute('href', `/${tool.slug}`);
+    }
+  });
+
+  test('groups the directory under category headings', () => {
+    render(<App />);
+    const directory = within(screen.getByRole('region', { name: /all tools/i }));
+
+    for (const label of Object.values(CATEGORY_LABELS)) {
+      expect(directory.getByRole('heading', { name: new RegExp(label, 'i') }))
+        .toBeInTheDocument();
+    }
+  });
+
+  test('keeps alias pages out of the directory', () => {
+    // They exist for Google, where people phrase the same need differently.
+    // On the site they would present one tool as several.
+    render(<App />);
+    const directory = within(screen.getByRole('region', { name: /all tools/i }));
+
+    expect(
+      directory.queryByRole('link', { name: /^reduce image size$/i }),
+    ).not.toBeInTheDocument();
   });
 
   test('reassures the user about privacy without requiring signup', () => {

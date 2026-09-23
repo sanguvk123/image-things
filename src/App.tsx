@@ -19,6 +19,7 @@ export function AppRoutes() {
           <Route path="/:slug" element={<ToolRoute />} />
         </Routes>
       </main>
+      <SiteFooter />
     </>
   );
 }
@@ -33,15 +34,39 @@ export function App() {
 
 function SiteHeader() {
   return (
-    <header className="border-b border-line bg-surface/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center px-6 py-3.5">
+    <header className="sticky top-0 z-20 border-b border-line bg-surface/80 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center px-5 py-3 sm:px-6">
         <Link
           to="/"
-          className="text-[15px] font-medium tracking-[-0.01em] text-ink"
+          className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em] text-ink"
         >
+          <span
+            aria-hidden="true"
+            className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-optimize via-convert to-privacy text-white"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="4" />
+              <circle cx="9" cy="9" r="1.6" />
+              <path d="m4 17 5-5 5 5 2-2 4 4" />
+            </svg>
+          </span>
           Image Tools
         </Link>
       </div>
     </header>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer className="mt-4 border-t border-line bg-surface">
+      <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-6 text-[13px] text-ink-faint sm:px-6">
+        <p>
+          Every tool runs entirely in your browser. Your images are never
+          uploaded to a server.
+        </p>
+        <p>Free • No signup • No watermarks</p>
+      </div>
+    </footer>
   );
 }
