@@ -311,3 +311,24 @@ export async function sharpenImage(
     suffix: 'sharpened',
   });
 }
+
+/**
+ * Strip metadata (spec §29).
+ *
+ * Drawing to a canvas and re-encoding produces pixels only — EXIF, GPS and
+ * device tags cannot survive the round trip. Quality is kept high because the
+ * user asked for privacy, not for a smaller file.
+ */
+export async function removeMetadata(image: LoadedImage): Promise<ProcessedImage> {
+  const format = preservedFormat(image.file);
+  const { canvas } = drawToCanvas(image.bitmap, image.width, image.height, format);
+  const blob = await encode(canvas, format, 0.96);
+
+  return toResult(blob, {
+    width: image.width,
+    height: image.height,
+    format,
+    sourceName: image.file.name,
+    suffix: 'clean',
+  });
+}
