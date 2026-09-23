@@ -138,6 +138,8 @@ rewrite rules are needed for the tool pages themselves.
 
 ### The origin must match the host
 
+The production domain is `imagethings.shop`.
+
 Canonical URLs and the sitemap are built from `SITE_URL`. A canonical naming a
 domain that does not serve the page tells Google to index that other domain
 instead, so if it is wrong, none of these pages get indexed. It is resolved at
@@ -145,7 +147,11 @@ build time by `vite.config.ts`, in order:
 
 1. the `SITE_URL` (or `VITE_SITE_URL`) environment variable,
 2. `VERCEL_PROJECT_PRODUCTION_URL`, the project's stable production domain,
-3. a hardcoded fallback for local builds.
+3. the production domain, hardcoded as the default.
+
+Most SEO tests derive their expected URLs from `SITE_URL`, so they would keep
+passing if it were changed to something wrong. One test in `seo.test.ts` pins
+the literal production domain to catch exactly that.
 
 `VERCEL_URL` is deliberately unused: it is unique per deployment, so canonicals
 built from it would nominate a throwaway preview build as the real site. Set

@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { TOOLS, headingFor } from '@/tools/registry';
 import { installCanvasStubs, type CanvasStub } from '@/test/canvas';
 import { renderTool } from '@/test/tool';
+import { SITE_URL } from '@/tools/seo';
 
 let canvas: CanvasStub;
 
@@ -66,6 +67,6 @@ describe('tool routing', () => {
     ).toBe(description);
     expect(
       document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe(`https://imageutility.app/${slug}`);
+    ).toBe(`${SITE_URL}/${slug}`);
   });
 });

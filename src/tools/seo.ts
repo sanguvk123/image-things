@@ -13,14 +13,13 @@ import { TOOLS, type Tool } from './registry';
 /**
  * The production origin, used to build canonical URLs and the sitemap.
  *
- * Injected at build time by vite.config.ts from SITE_URL (or Vercel's
- * production domain), so a deploy on a different host emits canonicals that
- * point at itself. A canonical naming a domain that does not serve the page
- * asks Google to index the other domain instead -- which, if that domain is
- * not live, means none of these pages get indexed at all.
+ * Injected at build time by vite.config.ts, which allows an environment
+ * override. A canonical naming a domain that does not serve the page asks
+ * Google to index that other domain instead -- so if this is wrong, none of
+ * these pages get indexed.
  */
 export const SITE_URL: string =
-  import.meta.env?.VITE_SITE_URL ?? 'https://imageutility.app';
+  import.meta.env?.VITE_SITE_URL ?? 'https://imagethings.shop';
 
 /** Google truncates around here; staying under keeps the full title visible. */
 export const MAX_TITLE_LENGTH = 60;

@@ -11,6 +11,24 @@ import {
   toolMeta,
 } from './seo';
 
+describe('SITE_URL', () => {
+  it('is the production domain', () => {
+    // Most SEO assertions derive from SITE_URL, so they would keep passing if
+    // it were wrong. This is the one place that pins the real value: a
+    // canonical naming a domain that does not serve the site tells Google to
+    // index that domain instead, which would deindex every page here.
+    expect(SITE_URL).toBe('https://imagethings.shop');
+  });
+
+  it('has no trailing slash, so canonicals never double up', () => {
+    expect(SITE_URL.endsWith('/')).toBe(false);
+  });
+
+  it('is https, since canonicals must name the scheme actually served', () => {
+    expect(SITE_URL.startsWith('https://')).toBe(true);
+  });
+});
+
 describe('canonicalUrl', () => {
   it('maps the home route to the bare origin', () => {
     expect(canonicalUrl('/')).toBe(`${SITE_URL}/`);

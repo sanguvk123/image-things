@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
-/** Fallback origin, used for local builds and tests. */
-const DEFAULT_SITE_URL = 'https://imageutility.app';
+/** The production domain. Used unless an environment overrides it. */
+const DEFAULT_SITE_URL = 'https://imagethings.shop';
 
 /**
  * Resolves the origin that canonical URLs and the sitemap are built from.

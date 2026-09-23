@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { DocumentHead } from './DocumentHead';
-import { canonicalUrl } from '@/tools/seo';
+import { SITE_URL, canonicalUrl } from '@/tools/seo';
 
 function head(selector: string): Element | null {
   return document.head.querySelector(selector);
@@ -48,7 +48,7 @@ describe('DocumentHead', () => {
 
     await waitFor(() =>
       expect(head('link[rel="canonical"]')?.getAttribute('href')).toBe(
-        'https://imageutility.app/crop-image',
+        `${SITE_URL}/crop-image`,
       ),
     );
   });
@@ -71,7 +71,7 @@ describe('DocumentHead', () => {
       'Rotate a sideways photo in one click.',
     );
     expect(head('meta[property="og:url"]')?.getAttribute('content')).toBe(
-      'https://imageutility.app/rotate-image',
+      `${SITE_URL}/rotate-image`,
     );
   });
 
@@ -98,7 +98,7 @@ describe('DocumentHead', () => {
     // wrong thing about the page the user is actually on.
     expect(document.head.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
     expect(head('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      'https://imageutility.app/second',
+      `${SITE_URL}/second`,
     );
     expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(
       1,

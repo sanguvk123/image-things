@@ -9,7 +9,7 @@ import {
   renderPageHtml,
   stripHoistedMetadata,
 } from './html';
-import { allPageMeta, canonicalUrl, type PageMeta } from '@/tools/seo';
+import { SITE_URL, allPageMeta, canonicalUrl, type PageMeta } from '@/tools/seo';
 import { TOOLS } from '@/tools/registry';
 
 const TEMPLATE = `<!doctype html>
@@ -51,7 +51,7 @@ describe('renderPageHtml', () => {
 
   it('includes the canonical URL', () => {
     expect(html).toContain(
-      '<link rel="canonical" href="https://imageutility.app/compress-image-to-100kb" />',
+      `<link rel="canonical" href="${SITE_URL}/compress-image-to-100kb" />`,
     );
   });
 
@@ -82,7 +82,7 @@ describe('stripHoistedMetadata', () => {
   // is meant to solve.
   const rendered =
     '<title>Dup</title><meta name="description" content="Dup."/>' +
-    '<link rel="canonical" href="https://imageutility.app/x"/>' +
+    '<link rel="canonical" href="https://example.test/x"/>' +
     '<h1>Convert JPG to PNG</h1><p>Real content.</p>';
 
   it('removes inline title, meta and link tags', () => {
@@ -150,8 +150,8 @@ describe('buildSitemap', () => {
   });
 
   it('lists absolute canonical URLs', () => {
-    expect(sitemap).toContain('<loc>https://imageutility.app/compress-image</loc>');
-    expect(sitemap).toContain('<loc>https://imageutility.app/</loc>');
+    expect(sitemap).toContain(`<loc>${SITE_URL}/compress-image</loc>`);
+    expect(sitemap).toContain(`<loc>${SITE_URL}/</loc>`);
   });
 
   it('is well-formed XML with the sitemap namespace', () => {
@@ -165,10 +165,10 @@ describe('buildSitemap', () => {
 
 describe('buildRobots', () => {
   it('allows crawling and points at the sitemap', () => {
-    const robots = buildRobots('https://imageutility.app/sitemap.xml');
+    const robots = buildRobots(canonicalUrl('sitemap.xml'));
     expect(robots).toContain('User-agent: *');
     expect(robots).toContain('Allow: /');
-    expect(robots).toContain('Sitemap: https://imageutility.app/sitemap.xml');
+    expect(robots).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`);
   });
 });
 
