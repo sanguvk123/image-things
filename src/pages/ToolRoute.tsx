@@ -3,6 +3,7 @@ import { getTool, type Tool } from '@/tools/registry';
 import { CompressImage } from './tools/CompressImage';
 import { CompressToSize } from './tools/CompressToSize';
 import { ResizeImage } from './tools/ResizeImage';
+import { ConvertImage } from './tools/ConvertImage';
 
 /**
  * Maps a tool slug to its page component.
@@ -18,6 +19,11 @@ const PAGES: Record<string, (props: { tool: Tool }) => React.ReactElement> = {
   'compress-image-to-200kb': CompressToSize,
   'compress-image-to-500kb': CompressToSize,
   'resize-image': ResizeImage,
+  'jpg-to-png': ConvertImage,
+  'png-to-jpg': ConvertImage,
+  'webp-to-jpg': ConvertImage,
+  'jpg-to-webp': ConvertImage,
+  'png-to-webp': ConvertImage,
 };
 
 export function ToolRoute() {

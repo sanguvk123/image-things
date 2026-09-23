@@ -124,3 +124,25 @@ export async function resizeImage(
     suffix: 'resized',
   });
 }
+
+/**
+ * Convert between formats (spec §30).
+ *
+ * No suffix on the filename: the extension already changed, so photo.jpg
+ * becomes photo.png without colliding with the original.
+ */
+export async function convertImage(
+  image: LoadedImage,
+  format: OutputFormat,
+): Promise<ProcessedImage> {
+  const { canvas } = drawToCanvas(image.bitmap, image.width, image.height, format);
+  // PNG ignores quality; passing it anyway is harmless and keeps one path.
+  const blob = await encode(canvas, format, EDIT_QUALITY);
+
+  return toResult(blob, {
+    width: image.width,
+    height: image.height,
+    format,
+    sourceName: image.file.name,
+  });
+}
