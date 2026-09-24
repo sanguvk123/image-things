@@ -108,7 +108,7 @@ export function Dropzone({
     >
       <UploadIcon active={isDragging} />
 
-      <p className="mt-3 text-[15px] text-ink">Drop image here</p>
+      <p className="mt-3 text-ui text-ink">Drop image here</p>
 
       <button
         type="button"

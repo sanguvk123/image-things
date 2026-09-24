@@ -87,10 +87,10 @@ function MetadataTable({ entries }: { entries: MetadataEntry[] | null }) {
   if (entries.length === 0) {
     return (
       <div>
-        <p className="mb-2 text-[13px] font-medium tracking-wide text-ink-faint uppercase">
+        <p className="mb-2 text-meta font-medium tracking-wide text-ink-faint uppercase">
           Metadata
         </p>
-        <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-[15px] text-ink-soft">
+        <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-ui text-ink-soft">
           No metadata found. This image carries no camera, date or location
           information.
         </p>
@@ -100,7 +100,7 @@ function MetadataTable({ entries }: { entries: MetadataEntry[] | null }) {
 
   return (
     <div>
-      <p className="mb-2 text-[13px] font-medium tracking-wide text-ink-faint uppercase">
+      <p className="mb-2 text-meta font-medium tracking-wide text-ink-faint uppercase">
         Metadata found
       </p>
       <dl className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
@@ -110,7 +110,7 @@ function MetadataTable({ entries }: { entries: MetadataEntry[] | null }) {
             className="flex items-baseline justify-between gap-4 px-4 py-3"
           >
             <dt className="text-sm text-ink-faint">{entry.label}</dt>
-            <dd className="tabular text-right text-[15px] text-ink">{entry.value}</dd>
+            <dd className="tabular text-right text-ui text-ink">{entry.value}</dd>
           </div>
         ))}
       </dl>

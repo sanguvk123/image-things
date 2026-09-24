@@ -39,9 +39,9 @@ export function ToolContent({ tool }: { tool: Tool }) {
         </h2>
         <ol className="mt-3 space-y-2.5">
           {steps.map((step, index) => (
-            <li key={step} className="flex gap-3 text-[15px] text-ink-soft">
+            <li key={step} className="flex gap-3 text-ui text-ink-soft">
               <span
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold ${style.tile} ${style.text}`}
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${style.tile} ${style.text}`}
               >
                 {index + 1}
               </span>
@@ -57,7 +57,7 @@ export function ToolContent({ tool }: { tool: Tool }) {
         </h2>
         <div className="mt-3 space-y-3">
           {why.map((paragraph) => (
-            <p key={paragraph} className="text-[15px] leading-relaxed text-ink-soft">
+            <p key={paragraph} className="text-ui leading-relaxed text-ink-soft">
               {paragraph}
             </p>
           ))}
@@ -71,8 +71,8 @@ export function ToolContent({ tool }: { tool: Tool }) {
         <dl className="mt-3 space-y-4">
           {faqs.map((faq) => (
             <div key={faq.question}>
-              <dt className="text-[15px] font-medium text-ink">{faq.question}</dt>
-              <dd className="mt-1 text-[15px] leading-relaxed text-ink-soft">
+              <dt className="text-ui font-medium text-ink">{faq.question}</dt>
+              <dd className="mt-1 text-ui leading-relaxed text-ink-soft">
                 {faq.answer}
               </dd>
             </div>

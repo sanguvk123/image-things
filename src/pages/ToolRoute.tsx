@@ -45,7 +45,7 @@ function ToolSkeleton({ tool }: { tool: Tool }) {
       <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
         {headingFor(tool)}
       </h1>
-      <p className="mt-2 text-[15px] text-ink-soft">{tool.description}</p>
+      <p className="mt-2 text-ui text-ink-soft">{tool.description}</p>
       <div
         className="mt-6 h-64 animate-pulse rounded-2xl bg-line/40"
         aria-hidden="true"

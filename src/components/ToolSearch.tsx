@@ -62,7 +62,7 @@ export function ToolSearch() {
           aria-controls={isOpen ? listId : undefined}
           aria-expanded={isOpen}
           role="combobox"
-          className="w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-ink-faint [&::-webkit-search-cancel-button]:appearance-none"
+          className="w-full bg-transparent text-ui text-ink outline-none placeholder:text-ink-faint [&::-webkit-search-cancel-button]:appearance-none"
         />
       </div>
 
@@ -90,7 +90,7 @@ export function ToolSearch() {
                   index === activeIndex ? 'bg-accent-soft' : 'bg-transparent'
                 }`}
               >
-                <span className="text-[15px] text-ink">{tool.title}</span>
+                <span className="text-ui text-ink">{tool.title}</span>
                 <span className="text-xs text-ink-faint">{tool.tagline}</span>
               </button>
             ))

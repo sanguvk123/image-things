@@ -70,7 +70,7 @@ export function ResizeImage({ tool }: { tool: Tool }) {
         <NumberField label="Height" value={height} onChange={changeHeight} />
       </div>
 
-      <label className="flex cursor-pointer items-center gap-2.5 text-[15px] text-ink">
+      <label className="flex cursor-pointer items-center gap-2.5 text-ui text-ink">
         <input
           type="checkbox"
           checked={keepRatio}
@@ -120,7 +120,7 @@ function NumberField({
     <div>
       <label
         htmlFor={`field-${label}`}
-        className="mb-2 block text-[13px] font-medium tracking-wide text-ink-faint uppercase"
+        className="mb-2 block text-meta font-medium tracking-wide text-ink-faint uppercase"
       >
         {label}
       </label>
@@ -131,7 +131,7 @@ function NumberField({
           min={1}
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
-          className="tabular w-full rounded-xl border border-line bg-surface px-3 py-2 text-[15px] text-ink outline-none transition-colors duration-150 focus:border-accent"
+          className="tabular w-full rounded-xl border border-line bg-surface px-3 py-2 text-ui text-ink outline-none transition-colors duration-150 focus:border-accent"
         />
         <span className="text-sm text-ink-faint">px</span>
       </div>

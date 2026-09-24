@@ -73,7 +73,7 @@ function ToggleButton({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`rounded-xl border px-5 py-3 text-[15px] transition-all duration-150 active:scale-[0.98] ${
+      className={`rounded-xl border px-5 py-3 text-ui transition-all duration-150 active:scale-[0.98] ${
         selected
           ? 'border-accent bg-accent-soft text-accent'
           : 'border-line bg-surface text-ink hover:border-line-strong'

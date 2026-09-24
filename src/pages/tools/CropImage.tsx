@@ -156,7 +156,7 @@ export function CropImage({ tool }: { tool: Tool }) {
             </div>
 
             <div className="flex items-baseline justify-between">
-              <p className="truncate text-[15px] text-ink">{image.file.name}</p>
+              <p className="truncate text-ui text-ink">{image.file.name}</p>
               {pixels && (
                 <p className="tabular text-sm text-ink-faint">
                   {`${pixels.width} × ${pixels.height}`}

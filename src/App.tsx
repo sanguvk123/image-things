@@ -41,7 +41,7 @@ function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center px-5 py-3 sm:px-6">
         <Link
           to="/"
-          className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em] text-ink"
+          className="flex items-center gap-2 text-ui font-semibold tracking-[-0.01em] text-ink"
         >
           <span
             aria-hidden="true"
@@ -63,7 +63,7 @@ function SiteHeader() {
 function SiteFooter() {
   return (
     <footer className="mt-4 border-t border-line bg-surface">
-      <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-6 text-[13px] text-ink-faint sm:px-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-6 text-meta text-ink-faint sm:px-6">
         <p>
           Every tool runs entirely in your browser. Your images are never
           uploaded to a server.

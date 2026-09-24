@@ -1,0 +1,57 @@
+<!doctype html>
+<!--
+  Loads the real pages in a 390px-wide iframe and reports any element whose
+  right edge exceeds the viewport. Rendering the page at mobile width and
+  measuring it is the only way to tell a genuine overflow from a screenshot
+  artefact.
+-->
+<html>
+  <head><meta charset="utf-8" /><title>overflow probe</title></head>
+  <body style="margin:0;font:13px monospace;white-space:pre">
+    <div id="out">measuring…</div>
+    <script>
+      const ROUTES = ['/', '/compress-image', '/resize-image', '/crop-image', '/image-to-pdf'];
+      const WIDTH = 390;
+      const lines = [];
+
+      function probe(route) {
+        return new Promise((resolve) => {
+          const frame = document.createElement('iframe');
+          frame.style.cssText = `width:${WIDTH}px;height:900px;border:0;position:absolute;left:-9999px`;
+          frame.src = route;
+          frame.onload = () => {
+            setTimeout(() => {
+              const d = frame.contentDocument;
+              const root = d.documentElement;
+              const offenders = [];
+              if (root.scrollWidth > WIDTH + 1) {
+                for (const el of d.querySelectorAll('*')) {
+                  const r = el.getBoundingClientRect();
+                  if (r.right > WIDTH + 1 && r.width > 0) {
+                    offenders.push(
+                      `${el.tagName.toLowerCase()}.${(el.className || '').toString().split(' ')[0]} right=${Math.round(r.right)} "${(el.textContent || '').trim().slice(0, 30)}"`,
+                    );
+                  }
+                }
+              }
+              lines.push(
+                `${route}  scrollWidth=${root.scrollWidth} clientWidth=${WIDTH} ` +
+                  (root.scrollWidth > WIDTH + 1 ? `OVERFLOW by ${root.scrollWidth - WIDTH}px` : 'ok'),
+              );
+              for (const o of offenders.slice(0, 5)) lines.push('      ' + o);
+              frame.remove();
+              resolve();
+            }, 700);
+          };
+          document.body.appendChild(frame);
+        });
+      }
+
+      (async () => {
+        for (const r of ROUTES) await probe(r);
+        document.getElementById('out').textContent = lines.join('\n');
+        document.title = 'done';
+      })();
+    </script>
+  </body>
+</html>

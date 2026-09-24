@@ -76,7 +76,7 @@ export function CompressToSize({ tool }: { tool: Tool }) {
       <div>
         <label
           htmlFor="target-size"
-          className="mb-2 block text-[13px] font-medium tracking-wide text-ink-faint uppercase"
+          className="mb-2 block text-meta font-medium tracking-wide text-ink-faint uppercase"
         >
           Custom target
         </label>
@@ -87,7 +87,7 @@ export function CompressToSize({ tool }: { tool: Tool }) {
             min={1}
             value={targetKB}
             onChange={(event) => setTargetKB(Number(event.target.value))}
-            className="tabular w-32 rounded-xl border border-line bg-surface px-3 py-2 text-[15px] text-ink outline-none transition-colors duration-150 focus:border-accent"
+            className="tabular w-32 rounded-xl border border-line bg-surface px-3 py-2 text-ui text-ink outline-none transition-colors duration-150 focus:border-accent"
           />
           <span className="text-sm text-ink-faint">KB</span>
         </div>

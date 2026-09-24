@@ -94,7 +94,7 @@ export function ToolLayout({
           {headingFor(tool)}
         </h1>
       </div>
-      <p className="mt-2 text-[15px] text-ink-soft">{tool.description}</p>
+      <p className="mt-2 text-ui text-ink-soft">{tool.description}</p>
 
       <div className="mt-6">
         {result ? (
@@ -213,7 +213,7 @@ export function RelatedTools({
     <section aria-labelledby="related-tools" className="mt-12 border-t border-line pt-6">
       <h2
         id="related-tools"
-        className="mb-3 text-[12px] font-semibold tracking-[0.06em] text-ink-faint uppercase"
+        className="mb-3 text-xs font-semibold tracking-[0.06em] text-ink-faint uppercase"
       >
         Related tools
       </h2>
@@ -229,7 +229,7 @@ export function RelatedTools({
               <span className={`shrink-0 ${style.text}`}>
                 <ToolIcon tool={other} className="h-[18px] w-[18px]" />
               </span>
-              <span className="truncate text-[13.5px] text-ink">{other.title}</span>
+              <span className="truncate text-meta text-ink">{other.title}</span>
             </Link>
           );
         })}

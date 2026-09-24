@@ -31,7 +31,7 @@ export function Home() {
             just work.
           </span>
         </h1>
-        <p className="mt-3 max-w-xl text-[15px] text-ink-soft sm:text-base">
+        <p className="mt-3 max-w-xl text-ui text-ink-soft sm:text-base">
           Resize, compress, convert, edit and optimize your images in seconds.
         </p>
 
@@ -39,7 +39,7 @@ export function Home() {
           <ToolSearch />
         </div>
 
-        <p className="mt-3 text-[13px] text-ink-faint">{PRIVACY_LINE}</p>
+        <p className="mt-3 text-meta text-ink-faint">{PRIVACY_LINE}</p>
       </section>
 
       <section aria-labelledby="popular-tools" className="pb-10">
@@ -63,10 +63,10 @@ export function Home() {
             const style = categoryStyle(category);
             return (
               <div key={category}>
-                <h3 className="mb-2.5 flex items-center gap-2 text-[13px] font-semibold text-ink">
+                <h3 className="mb-2.5 flex items-center gap-2 text-meta font-semibold text-ink">
                   <span className={`h-2 w-2 rounded-full ${style.tile} ring-2 ${style.text} ring-current/30`} />
                   {CATEGORY_LABELS[category]}
-                  <span className="text-[12px] font-normal text-ink-faint">
+                  <span className="text-xs font-normal text-ink-faint">
                     {tools.length}
                   </span>
                 </h3>
@@ -89,7 +89,7 @@ function SectionHeading({ id, children }: { id: string; children: string }) {
   return (
     <h2
       id={id}
-      className="mb-3 text-[12px] font-semibold tracking-[0.06em] text-ink-faint uppercase"
+      className="mb-3 text-xs font-semibold tracking-[0.06em] text-ink-faint uppercase"
     >
       {children}
     </h2>
@@ -110,8 +110,8 @@ function PopularCard({ tool }: { tool: Tool }) {
         <ToolIcon tool={tool} />
       </span>
       <span className="min-w-0">
-        <span className="block text-[14px] font-medium text-ink">{tool.title}</span>
-        <span className="mt-0.5 block truncate text-[13px] text-ink-faint">
+        <span className="block text-sm font-medium text-ink">{tool.title}</span>
+        <span className="mt-0.5 block truncate text-meta text-ink-faint">
           {tool.tagline}
         </span>
       </span>
@@ -130,7 +130,7 @@ function CompactCard({ tool }: { tool: Tool }) {
       <span className={`shrink-0 ${style.text}`}>
         <ToolIcon tool={tool} className="h-[18px] w-[18px]" />
       </span>
-      <span className="truncate text-[13.5px] text-ink">{tool.title}</span>
+      <span className="truncate text-meta text-ink">{tool.title}</span>
     </Link>
   );
 }

@@ -81,7 +81,7 @@ export function ResultPanel({
         <button
           type="button"
           onClick={() => downloadResult(result)}
-          className="w-full rounded-full bg-accent px-5 py-3 text-[15px] font-medium text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full rounded-full bg-accent px-5 py-3 text-ui font-medium text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99]"
         >
           Download
         </button>

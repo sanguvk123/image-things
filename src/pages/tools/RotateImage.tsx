@@ -75,7 +75,7 @@ function TurnButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="rounded-xl border border-line bg-surface px-5 py-3 text-[15px] text-ink transition-all duration-150 hover:border-line-strong active:scale-[0.98]"
+      className="rounded-xl border border-line bg-surface px-5 py-3 text-ui text-ink transition-all duration-150 hover:border-line-strong active:scale-[0.98]"
     >
       {children}
     </button>

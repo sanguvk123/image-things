@@ -32,10 +32,10 @@ export function ConvertImage({ tool }: { tool: Tool }) {
       hideSavings
     >
       <div>
-        <p className="mb-2 text-[13px] font-medium tracking-wide text-ink-faint uppercase">
+        <p className="mb-2 text-meta font-medium tracking-wide text-ink-faint uppercase">
           Output
         </p>
-        <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-[15px] text-ink">
+        <p className="rounded-2xl border border-line bg-surface px-4 py-3 text-ui text-ink">
           {outputLabel}
         </p>
       </div>

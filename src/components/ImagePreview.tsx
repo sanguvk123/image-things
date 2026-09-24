@@ -48,7 +48,7 @@ export function ImagePreview({
 
       <div className="mt-3 flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="truncate text-[15px] text-ink">{image.file.name}</p>
+          <p className="truncate text-ui text-ink">{image.file.name}</p>
           <p className="tabular mt-0.5 text-sm text-ink-faint">{meta}</p>
         </div>
 

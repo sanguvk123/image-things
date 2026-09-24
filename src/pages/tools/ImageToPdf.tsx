@@ -144,7 +144,7 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
             <button
               type="button"
               onClick={() => downloadResult(result)}
-              className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-[15px] font-medium text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99]"
+              className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-ui font-medium text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99]"
             >
               Download PDF
             </button>
@@ -171,7 +171,7 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
                       className="h-12 w-12 rounded-lg object-cover"
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[15px] text-ink">
+                      <span className="block truncate text-ui text-ink">
                         {image.file.name}
                       </span>
                       <span className="tabular block text-sm text-ink-faint">

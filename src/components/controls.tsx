@@ -22,7 +22,7 @@ export function ActionButton({
       onClick={onClick}
       disabled={busy || disabled}
       aria-busy={busy}
-      className="w-full rounded-full bg-accent px-5 py-3 text-[15px] font-medium text-white transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:scale-100"
+      className="w-full rounded-full bg-accent px-5 py-3 text-ui font-medium text-white transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:scale-100"
     >
       {busy ? 'Working…' : children}
     </button>
@@ -52,7 +52,7 @@ export function OptionCards<T extends string>({
 }) {
   return (
     <fieldset>
-      <legend className="mb-2 text-[13px] font-medium tracking-wide text-ink-faint uppercase">
+      <legend className="mb-2 text-meta font-medium tracking-wide text-ink-faint uppercase">
         {legend}
       </legend>
 
@@ -81,7 +81,7 @@ export function OptionCards<T extends string>({
                 className="mt-1 accent-[#0a84ff]"
               />
               <span>
-                <span className="block text-[15px] text-ink">{option.label}</span>
+                <span className="block text-ui text-ink">{option.label}</span>
                 {option.description && (
                   <span id={descriptionId} className="block text-sm text-ink-faint">
                     {option.description}
@@ -106,7 +106,7 @@ export function PillGroup({
 }) {
   return (
     <div>
-      <p className="mb-2 text-[13px] font-medium tracking-wide text-ink-faint uppercase">
+      <p className="mb-2 text-meta font-medium tracking-wide text-ink-faint uppercase">
         {legend}
       </p>
       <div className="flex flex-wrap gap-2">{children}</div>
@@ -165,7 +165,7 @@ export function Slider({
       <div className="mb-2 flex items-baseline justify-between">
         <label
           htmlFor={`slider-${label}`}
-          className="text-[13px] font-medium tracking-wide text-ink-faint uppercase"
+          className="text-meta font-medium tracking-wide text-ink-faint uppercase"
         >
           {label}
         </label>
@@ -204,7 +204,7 @@ export const PRIVACY_LINE = 'Private • Runs in your browser • No signup';
 
 export function ErrorNote({ children }: { children: ReactNode }) {
   return (
-    <p role="alert" className="text-sm text-[#c0392b]">
+    <p role="alert" className="text-sm text-bad">
       {children}
     </p>
   );
