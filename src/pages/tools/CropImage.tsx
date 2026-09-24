@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ToolContent } from '@/components/ToolContent';
+import { RelatedTools } from '@/components/ToolLayout';
 import { Dropzone } from '@/components/Dropzone';
 import { ResultPanel } from '@/components/ResultPanel';
 import {
@@ -204,6 +205,7 @@ export function CropImage({ tool }: { tool: Tool }) {
       </div>
 
       <ToolContent tool={tool} />
+      <RelatedTools tool={tool} />
     </div>
   );
 }

@@ -9,7 +9,8 @@ import { ToolIcon, categoryStyle } from './ToolIcon';
 import { ToolContent } from './ToolContent';
 import { takeHandoff } from '@/image/handoff';
 import type { LoadedImage, ProcessedImage } from '@/image/pipeline';
-import { TOOLS, headingFor, type Tool } from '@/tools/registry';
+import { headingFor, type Tool } from '@/tools/registry';
+import { relatedTools } from '@/seo/internalLinks';
 
 interface ToolLayoutProps {
   tool: Tool;
@@ -176,17 +177,35 @@ function TrustBadges() {
 }
 
 /**
- * Other tools in the same category.
+ * Other tools worth a click from here.
  *
  * Most visitors arrive from a search for one narrow need and leave without
  * discovering the other sixty tools. This also gives every landing page
  * internal links, which is how crawlers find pages that nothing else links to.
+ *
+ * The selection lives in seo/internalLinks so the whole link graph can be
+ * asserted on as a graph -- taking the first six of a category, which is what
+ * this did before, left a quarter of the site orphaned.
+ *
+ * Exported because three tools (crop, image-to-pdf, the metadata viewer) need
+ * layouts of their own. They were silently missing this section, which cost
+ * six pages every onward link they had.
+ *
+ * `exclude` drops a tool the page already links to more prominently. The
+ * metadata viewer offers "Want this gone? Remove metadata" right beside the
+ * data, and repeating it in a list below would give the page two identical
+ * links to the same place.
  */
-function RelatedTools({ tool }: { tool: Tool }) {
-  const related = TOOLS.filter(
-    (other) =>
-      other.category === tool.category && other.slug !== tool.slug && !other.aliasOf,
-  ).slice(0, 6);
+export function RelatedTools({
+  tool,
+  exclude = [],
+}: {
+  tool: Tool;
+  exclude?: string[];
+}) {
+  const related = relatedTools(tool).filter(
+    (other) => !exclude.includes(other.slug),
+  );
 
   if (related.length === 0) return null;
 

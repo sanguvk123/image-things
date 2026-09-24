@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
 import { ImagePreview } from '@/components/ImagePreview';
 import { ToolContent } from '@/components/ToolContent';
+import { RelatedTools } from '@/components/ToolLayout';
 import { ErrorNote, PRIVACY_LINE } from '@/components/controls';
 import { useImageTool } from '@/image/useImageTool';
 import { readMetadata, type MetadataEntry } from '@/image/metadata';
@@ -72,6 +73,8 @@ export function ViewMetadata({ tool }: { tool: Tool }) {
       </div>
 
       <ToolContent tool={tool} />
+      {/* The page already links to Remove Metadata beside the data itself. */}
+      <RelatedTools tool={tool} exclude={['remove-metadata']} />
     </div>
   );
 }

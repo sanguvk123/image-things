@@ -89,6 +89,43 @@ for (const asset of ['og.png', 'favicon.svg', 'apple-touch-icon.png']) {
 }
 
 /*
+ * Orphans: pages nothing links to.
+ *
+ * They can still be indexed via the sitemap, but they inherit no authority
+ * from the rest of the site, which for a landing page built to rank is close
+ * to pointless. Three tools use bespoke layouts and quietly omitted their
+ * related-tools section, orphaning seven pages while every unit test passed --
+ * the graph is only visible once assembled, so it is checked here.
+ */
+const routes = pages.map(
+  (file) => file.slice(dist.length).replace(/\/index\.html$/, '') || '/',
+);
+const inbound = new Map(routes.map((route) => [route, 0]));
+
+for (const file of pages) {
+  const from = file.slice(dist.length).replace(/\/index\.html$/, '') || '/';
+  const html = readFileSync(file, 'utf8');
+  const hrefs = new Set(
+    [...html.matchAll(/href="(\/[a-z0-9-]*)"/g)].map((match) => match[1]),
+  );
+  for (const href of hrefs) {
+    if (href !== from && inbound.has(href)) {
+      inbound.set(href, inbound.get(href) + 1);
+    }
+  }
+}
+
+const orphans = [...inbound.entries()]
+  .filter(([route, count]) => route !== '/' && count === 0)
+  .map(([route]) => route);
+
+if (orphans.length > 0) {
+  problems.push(
+    `orphaned pages, linked from nowhere on the site: ${orphans.join(', ')}`,
+  );
+}
+
+/*
  * Code splitting is easy to undo by accident and nothing fails when you do.
  * Statically importing a tool page anywhere the browser entry can reach it
  * cancels the matching dynamic import, the bundler folds every page back into
