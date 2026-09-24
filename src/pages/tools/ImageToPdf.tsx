@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
-import { ToolContent } from '@/components/ToolContent';
-import { RelatedTools } from '@/components/ToolLayout';
+import { ToolPage } from '@/components/ToolLayout';
 import { ActionButton, ErrorNote, PRIVACY_LINE } from '@/components/controls';
 import { formatBytes } from '@/image/format';
 import {
@@ -18,7 +16,7 @@ import {
 import { messageForLoadFailure } from '@/image/errors';
 import { buildPdf, type PdfPage } from '@/image/pdf';
 import { outputFileName } from '@/image/format';
-import { headingFor, type Tool } from '@/tools/registry';
+import type { Tool } from '@/tools/registry';
 
 /**
  * Image → PDF (spec §9).
@@ -118,20 +116,8 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pt-12 pb-24">
-      <Link
-        to="/"
-        className="text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
-      >
-        ← All tools
-      </Link>
-
-      <h1 className="mt-5 text-3xl font-semibold tracking-[-0.025em] text-ink">
-        {headingFor(tool)}
-      </h1>
-      <p className="mt-2 text-ink-soft">{tool.description}</p>
-
-      <div className="mt-8 space-y-6">
+    <ToolPage tool={tool}>
+      <div className="mt-6 space-y-6">
         {result ? (
           <div className="rounded-2xl border border-line bg-surface p-6 text-center">
             <p className="text-lg text-ink">
@@ -204,9 +190,6 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
           </>
         )}
       </div>
-
-      <ToolContent tool={tool} />
-      <RelatedTools tool={tool} />
-    </div>
+    </ToolPage>
   );
 }

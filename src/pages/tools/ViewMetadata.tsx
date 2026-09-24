@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropzone } from '@/components/Dropzone';
 import { ImagePreview } from '@/components/ImagePreview';
-import { ToolContent } from '@/components/ToolContent';
-import { RelatedTools } from '@/components/ToolLayout';
+import { ToolPage } from '@/components/ToolLayout';
 import { ErrorNote, PRIVACY_LINE } from '@/components/controls';
 import { useImageTool } from '@/image/useImageTool';
 import { readMetadata, type MetadataEntry } from '@/image/metadata';
-import { headingFor, type Tool } from '@/tools/registry';
+import type { Tool } from '@/tools/registry';
 
 /**
  * The EXIF viewer.
@@ -37,20 +36,10 @@ export function ViewMetadata({ tool }: { tool: Tool }) {
   }, [image]);
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pt-12 pb-24">
-      <Link
-        to="/"
-        className="text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
-      >
-        ← All tools
-      </Link>
-
-      <h1 className="mt-5 text-3xl font-semibold tracking-[-0.025em] text-ink">
-        {headingFor(tool)}
-      </h1>
-      <p className="mt-2 text-ink-soft">{tool.description}</p>
-
-      <div className="mt-8">
+    // The page already links to Remove Metadata beside the data itself, so it
+    // is kept out of the related-tools list rather than appearing twice.
+    <ToolPage tool={tool} contentExcludes={['remove-metadata']}>
+      <div className="mt-6">
         {image ? (
           <div className="space-y-7">
             <ImagePreview image={image} onRemove={reset} />
@@ -71,11 +60,7 @@ export function ViewMetadata({ tool }: { tool: Tool }) {
           </div>
         )}
       </div>
-
-      <ToolContent tool={tool} />
-      {/* The page already links to Remove Metadata beside the data itself. */}
-      <RelatedTools tool={tool} exclude={['remove-metadata']} />
-    </div>
+    </ToolPage>
   );
 }
 

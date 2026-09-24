@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ToolContent } from '@/components/ToolContent';
-import { RelatedTools } from '@/components/ToolLayout';
+import { ToolPage } from '@/components/ToolLayout';
 import { Dropzone } from '@/components/Dropzone';
 import { ResultPanel } from '@/components/ResultPanel';
 import {
@@ -21,7 +19,7 @@ import {
   type AspectRatio,
   type CropRect,
 } from '@/image/crop';
-import { headingFor, type Tool } from '@/tools/registry';
+import type { Tool } from '@/tools/registry';
 
 /**
  * Crop (spec §20): a simple visual crop, explicitly not a Photoshop editor.
@@ -91,20 +89,8 @@ export function CropImage({ tool }: { tool: Tool }) {
   const pixels = image ? toPixels(rect, image.width, image.height) : null;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pt-12 pb-24">
-      <Link
-        to="/"
-        className="text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
-      >
-        ← All tools
-      </Link>
-
-      <h1 className="mt-5 text-3xl font-semibold tracking-[-0.025em] text-ink">
-        {headingFor(tool)}
-      </h1>
-      <p className="mt-2 text-ink-soft">{tool.description}</p>
-
-      <div className="mt-8">
+    <ToolPage tool={tool}>
+      <div className="mt-6">
         {result ? (
           <ResultPanel
             result={result}
@@ -203,10 +189,7 @@ export function CropImage({ tool }: { tool: Tool }) {
           </div>
         )}
       </div>
-
-      <ToolContent tool={tool} />
-      <RelatedTools tool={tool} />
-    </div>
+    </ToolPage>
   );
 }
 

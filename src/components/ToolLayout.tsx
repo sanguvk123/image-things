@@ -71,31 +71,8 @@ export function ToolLayout({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const style = categoryStyle(tool.category);
-
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6">
-      <Link
-        to="/"
-        className="text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
-      >
-        ← All tools
-      </Link>
-
-      {/* The icon repeats the category colour from the grid, so arriving from
-          the homepage or from Google both land on a recognisable page. */}
-      <div className="mt-4 flex items-center gap-3">
-        <span
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${style.tile} ${style.text}`}
-        >
-          <ToolIcon tool={tool} className="h-6 w-6" />
-        </span>
-        <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
-          {headingFor(tool)}
-        </h1>
-      </div>
-      <p className="mt-2 text-ui text-ink-soft">{tool.description}</p>
-
+    <ToolPage tool={tool}>
       <div className="mt-6">
         {result ? (
           <>
@@ -131,9 +108,62 @@ export function ToolLayout({
           </div>
         )}
       </div>
+    </ToolPage>
+  );
+}
+
+/**
+ * The shell every tool page wears: back link, category icon, heading,
+ * description, then the supporting content and onward links.
+ *
+ * Most tools get this via ToolLayout. Three need their own body -- crop has a
+ * drag surface, image-to-pdf takes many files, the metadata viewer has no
+ * action to perform -- and before this existed they each kept a copy of the
+ * header. The copies drifted: all three lost the category icon and used
+ * different padding, and two forgot the related-tools section entirely, which
+ * left six pages with one outbound link between them.
+ *
+ * A bespoke body is legitimate. A bespoke shell is not.
+ */
+export function ToolPage({
+  tool,
+  children,
+  contentExcludes = [],
+}: {
+  tool: Tool;
+  children: ReactNode;
+  /** Tools the page already links to prominently; see RelatedTools. */
+  contentExcludes?: string[];
+}) {
+  const style = categoryStyle(tool.category);
+
+  return (
+    <div className="mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6">
+      <Link
+        to="/"
+        className="text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
+      >
+        ← All tools
+      </Link>
+
+      {/* The icon repeats the category colour from the grid, so arriving from
+          the homepage or from Google both land on a recognisable page. */}
+      <div className="mt-4 flex items-center gap-3">
+        <span
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${style.tile} ${style.text}`}
+        >
+          <ToolIcon tool={tool} className="h-6 w-6" />
+        </span>
+        <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.025em] text-ink sm:text-3xl">
+          {headingFor(tool)}
+        </h1>
+      </div>
+      <p className="mt-2 text-ui text-ink-soft">{tool.description}</p>
+
+      {children}
 
       <ToolContent tool={tool} />
-      <RelatedTools tool={tool} />
+      <RelatedTools tool={tool} exclude={contentExcludes} />
     </div>
   );
 }
