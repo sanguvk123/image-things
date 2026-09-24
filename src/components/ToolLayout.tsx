@@ -1,11 +1,13 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropzone } from './Dropzone';
 import { ImagePreview } from './ImagePreview';
 import { ResultPanel } from './ResultPanel';
+import { ContinueWith } from './ContinueWith';
 import { ErrorNote } from './controls';
 import { ToolIcon, categoryStyle } from './ToolIcon';
 import { ToolContent } from './ToolContent';
+import { takeHandoff } from '@/image/handoff';
 import type { LoadedImage, ProcessedImage } from '@/image/pipeline';
 import { TOOLS, headingFor, type Tool } from '@/tools/registry';
 
@@ -50,6 +52,24 @@ export function ToolLayout({
   hideSavings,
   acceptHint,
 }: ToolLayoutProps) {
+  /*
+   * Pick up an image handed over by the previous tool.
+   *
+   * Runs once per mount, and the handoff is consumed on read, so removing the
+   * image does not cause it to reappear on the next render. onSelectFile is
+   * intentionally not a dependency: it is redefined every render by the
+   * calling page, and depending on it would re-run this on every keystroke.
+   */
+  const collected = useRef(false);
+  useEffect(() => {
+    if (collected.current) return;
+    collected.current = true;
+
+    const handed = takeHandoff();
+    if (handed) onSelectFile(handed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const style = categoryStyle(tool.category);
 
   return (
@@ -77,13 +97,16 @@ export function ToolLayout({
 
       <div className="mt-6">
         {result ? (
-          <ResultPanel
-            result={result}
-            originalBytes={image?.file.size ?? 0}
-            onStartOver={onReset}
-            note={resultNote}
-            hideSavings={hideSavings}
-          />
+          <>
+            <ResultPanel
+              result={result}
+              originalBytes={image?.file.size ?? 0}
+              onStartOver={onReset}
+              note={resultNote}
+              hideSavings={hideSavings}
+            />
+            <ContinueWith tool={tool} result={result} />
+          </>
         ) : image ? (
           <div className="space-y-7">
             <ImagePreview
