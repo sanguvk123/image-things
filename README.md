@@ -9,8 +9,19 @@ editor to learn.
 ## Privacy
 
 Every image is processed in the browser on a canvas. Nothing is uploaded, which
-is both the privacy promise and the reason the tools feel instant — there is no
-network round trip.
+is both the privacy promise and the reason the tools feel instant — the image
+never makes a network round trip.
+
+The one exception to "no network calls" is Vercel Web Analytics, mounted in
+`src/main.tsx`. It counts page views; it does not see the images, which never
+leave the device. It is deliberately mounted in the browser entry rather than
+in `App.tsx`, because `App.tsx` is also rendered by the prerender, where a
+beacon would report 64 visits nobody made. `src/analytics.test.ts` enforces
+that placement.
+
+Note the user-facing copy makes no claim about cookies or tracking — only that
+images are not uploaded, which remains true. If that copy ever widens to "no
+tracking", this has to go.
 
 ## Getting started
 
