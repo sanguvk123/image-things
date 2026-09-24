@@ -13,7 +13,7 @@
  * is the honest thing to assert against.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -52,6 +52,43 @@ for (const file of pages) {
 }
 
 /*
+ * Structured data and the social card are invisible when they break: the page
+ * still renders perfectly for a human, and only the search result quietly
+ * degrades. So both are asserted against the built HTML.
+ */
+for (const file of pages) {
+  const html = readFileSync(file, 'utf8');
+  const route = file.slice(dist.length).replace(/\/index\.html$/, '') || '/';
+
+  const graph = html.match(
+    /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+  );
+  if (!graph) {
+    problems.push(`${route}: no JSON-LD -- structured data is not reaching the page`);
+  } else {
+    try {
+      // Google discards the whole block on a parse error, so invalid JSON here
+      // is equivalent to shipping none at all.
+      JSON.parse(graph[1]);
+    } catch (error) {
+      problems.push(`${route}: JSON-LD does not parse (${error.message})`);
+    }
+  }
+
+  if (!html.includes('property="og:image"')) {
+    problems.push(`${route}: no og:image -- shared links will have no preview`);
+  }
+}
+
+// A meta tag promising an image that 404s is worse than no tag: the crawler
+// fetches it, fails, and the link is shared with a blank card.
+for (const asset of ['og.png', 'favicon.svg', 'apple-touch-icon.png']) {
+  if (!existsSync(join(dist, asset))) {
+    problems.push(`${asset} is referenced in <head> but missing from the build`);
+  }
+}
+
+/*
  * Code splitting is easy to undo by accident and nothing fails when you do.
  * Statically importing a tool page anywhere the browser entry can reach it
  * cancels the matching dynamic import, the bundler folds every page back into
@@ -78,5 +115,6 @@ if (problems.length > 0) {
 
 console.log(
   `Verified ${pages.length} prerendered pages: all carry their tool, ` +
-    `and tool routes are code-split.`,
+    `tool routes are code-split, and every page ships valid structured data ` +
+    `and a social card that exists.`,
 );

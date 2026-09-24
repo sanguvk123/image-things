@@ -22,7 +22,11 @@ export function renderPath(path: string): string {
   );
 }
 
-export { allPageMeta, canonicalUrl, SITE_URL } from './tools/seo';
+export { canonicalUrl, SITE_URL } from './tools/seo';
+// The prerender writes pages with their schema.org graphs attached; plain
+// allPageMeta() carries none, so using it here would silently ship pages
+// without structured data.
+export { pageMetaWithStructuredData as allPageMeta } from './seo/structuredData';
 export {
   buildRobots,
   buildSitemap,

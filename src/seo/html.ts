@@ -5,8 +5,14 @@
  * does nothing but read, call these, and write.
  */
 
-import type { PageMeta } from '@/tools/seo';
+import {
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_URL,
+  OG_IMAGE_WIDTH,
+  type PageMeta,
+} from '@/tools/seo';
 import { HOME_KEY, lastmodFor } from './lastmod';
+import { SITE_NAME } from './structuredData';
 
 /** Escapes text destined for an HTML attribute value. */
 export function escapeAttribute(value: string): string {
@@ -27,16 +33,33 @@ function metaTags(meta: PageMeta): string {
   const description = escapeAttribute(meta.description);
   const canonical = escapeAttribute(meta.canonical);
 
-  return [
+  const tags = [
     `<title>${title}</title>`,
     `<meta name="description" content="${description}" />`,
     `<link rel="canonical" href="${canonical}" />`,
     `<meta property="og:type" content="website" />`,
+    `<meta property="og:site_name" content="${escapeAttribute(SITE_NAME)}" />`,
     `<meta property="og:title" content="${escapeAttribute(meta.title)}" />`,
     `<meta property="og:description" content="${description}" />`,
     `<meta property="og:url" content="${canonical}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-  ].join('\n    ');
+    `<meta property="og:image" content="${escapeAttribute(OG_IMAGE_URL)}" />`,
+    `<meta property="og:image:width" content="${OG_IMAGE_WIDTH}" />`,
+    `<meta property="og:image:height" content="${OG_IMAGE_HEIGHT}" />`,
+    // summary_large_image is the card that actually shows the picture; plain
+    // "summary" renders a thumbnail most people never notice.
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:image" content="${escapeAttribute(OG_IMAGE_URL)}" />`,
+  ];
+
+  if (meta.structuredData) {
+    // Already escaped at the source: structuredData.ts replaces "<" so no value
+    // can close this script element.
+    tags.push(
+      `<script type="application/ld+json">${meta.structuredData}</script>`,
+    );
+  }
+
+  return tags.join('\n    ');
 }
 
 /** Removes the template's placeholder title, description and canonical. */

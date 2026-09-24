@@ -33,6 +33,45 @@ const META: PageMeta = {
   canonical: canonicalUrl('compress-image-to-100kb'),
 };
 
+describe('social preview metadata', () => {
+  const html = renderPageHtml(TEMPLATE, META, '<h1>Compress</h1>');
+
+  it('names an absolute og:image, since crawlers will not resolve a relative one', () => {
+    const match = html.match(/<meta property="og:image" content="([^"]+)"/);
+    expect(match, 'og:image is missing entirely').not.toBeNull();
+    expect(match![1]).toMatch(/^https:\/\//);
+  });
+
+  it('declares the image dimensions so the card renders before the image loads', () => {
+    expect(html).toContain('<meta property="og:image:width" content="1200" />');
+    expect(html).toContain('<meta property="og:image:height" content="630" />');
+  });
+
+  it('uses a large Twitter card, which is the format that shows the image', () => {
+    expect(html).toContain('<meta name="twitter:card" content="summary_large_image" />');
+    expect(html).not.toContain('content="summary"');
+  });
+
+  it('carries og:site_name so the brand appears alongside shared links', () => {
+    expect(html).toContain('og:site_name');
+  });
+});
+
+describe('structured data in the served HTML', () => {
+  const graph = '{"@context":"https://schema.org","@graph":[]}';
+  const html = renderPageHtml(TEMPLATE, { ...META, structuredData: graph }, '<h1>x</h1>');
+
+  it('embeds the graph as a JSON-LD script a crawler can read without running JS', () => {
+    expect(html).toContain('<script type="application/ld+json">');
+    expect(html).toContain(graph);
+  });
+
+  it('omits the script entirely when a page has no graph', () => {
+    const bare = renderPageHtml(TEMPLATE, META, '<h1>x</h1>');
+    expect(bare).not.toContain('application/ld+json');
+  });
+});
+
 describe('renderPageHtml', () => {
   const html = renderPageHtml(TEMPLATE, META, '<h1>Compress your image to 100KB</h1>');
 

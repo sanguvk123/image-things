@@ -27,10 +27,26 @@ export const MAX_TITLE_LENGTH = 60;
 export const MAX_DESCRIPTION_LENGTH = 160;
 export const MIN_DESCRIPTION_LENGTH = 110;
 
+/**
+ * The social preview card. Served from /og.png at a fixed 1200x630, the size
+ * Facebook, LinkedIn, Slack and X all crop to. Absolute because a crawler
+ * fetching the card does not resolve relative URLs against the page.
+ */
+export const OG_IMAGE_URL = `${SITE_URL}/og.png`;
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+
 export interface PageMeta {
   title: string;
   description: string;
   canonical: string;
+  /**
+   * A schema.org JSON-LD graph, already serialised, emitted into <head>.
+   *
+   * Optional: the 404 page deliberately has none, because a page that does not
+   * exist should not describe itself to a crawler as an application.
+   */
+  structuredData?: string;
 }
 
 /** Builds an absolute canonical URL from a route path or bare slug. */
