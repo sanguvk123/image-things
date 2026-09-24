@@ -44,7 +44,15 @@ export function ResultPanel({
         it is announced as a single sentence instead of three fragments.
       */}
       <div role="status" className="mt-5 text-center">
-        <p className="tabular text-lg text-ink">
+        {/*
+          Name the outcome (review §7). "120 KB -> 40 KB" states two facts and
+          leaves the user to infer the important one: that it worked. Saying so
+          costs one line and is the first thing both a reader and a screen
+          reader reach.
+        */}
+        <p className="text-sm font-medium text-good">✓ Done</p>
+
+        <p className="tabular mt-1 text-lg text-ink">
           {hideSavings
             ? `${dimensions} · ${formatBytes(result.blob.size)}`
             : `${formatBytes(originalBytes)} → ${formatBytes(result.blob.size)}`}
@@ -66,8 +74,6 @@ export function ResultPanel({
           )
         )}
 
-        {/* Names the outcome. A bare "40 KB" read aloud says nothing about
-            whether the operation actually finished. */}
         <span className="sr-only">Ready to download.</span>
       </div>
 

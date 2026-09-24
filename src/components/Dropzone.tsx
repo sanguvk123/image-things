@@ -11,6 +11,16 @@ const IMAGE_EXTENSIONS =
  * HEIC and TIFF, so filtering on it would silently reject the exact files the
  * HEIC and TIFF tools exist to handle.
  */
+/**
+ * Whether this looks like an Apple machine, for naming the paste shortcut.
+ *
+ * Guarded for the prerender, which has no navigator.
+ */
+function isApplePlatform(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+}
+
 function looksLikeImage(file: File): boolean {
   if (file.type.startsWith('image/')) return true;
   return file.type === '' && IMAGE_EXTENSIONS.test(file.name);
@@ -36,6 +46,20 @@ export function Dropzone({
 }: DropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /*
+   * Resolved after mount rather than during render.
+   *
+   * The prerender has no navigator, so it always writes "Ctrl+V" into the
+   * HTML. If the first client render disagreed -- as it would on a Mac --
+   * that is a hydration mismatch on all 64 prerendered pages. Starting from
+   * the same value the server produced and correcting it in an effect keeps
+   * the two renders identical.
+   */
+  const [shortcut, setShortcut] = useState('Ctrl+V');
+  useEffect(() => {
+    if (isApplePlatform()) setShortcut('⌘V');
+  }, []);
   // Drag events fire for every child element; counting keeps the highlight
   // from flickering as the pointer moves across the zone's contents.
   const dragDepth = useRef(0);
@@ -95,7 +119,19 @@ export function Dropzone({
       </button>
 
       <p className="mt-4 text-xs text-ink-faint">{hint}</p>
-      <p className="mt-1 text-xs text-ink-faint">or paste from your clipboard</p>
+      {/*
+        Naming the key teaches it (review §18). Someone who has just taken a
+        screenshot is one keystroke from done -- but only if they know the
+        keystroke is there.
+      */}
+      {/*
+        Naming the key teaches it (review §18). Someone who has just taken a
+        screenshot is one keystroke from done -- but only if they know the
+        keystroke is there.
+      */}
+      <p className="mt-1 text-xs text-ink-faint">
+        or paste an image with {shortcut}
+      </p>
 
       <input
         ref={inputRef}

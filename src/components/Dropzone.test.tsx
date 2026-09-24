@@ -119,10 +119,13 @@ describe('clipboard paste', () => {
     expect(screen.getByText('Drop image here')).toBeInTheDocument();
   });
 
-  test('the page tells the user that pasting is possible', () => {
+  test('teaches the shortcut rather than only mentioning that paste works', () => {
+    // Review §18. Someone who has just taken a screenshot is one keystroke
+    // from done, but only if they know the keystroke exists. Naming the key
+    // turns a statement of fact into something the user learns.
     renderTool('compress-image');
 
-    expect(screen.getByText(/paste from your clipboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/paste .*(⌘V|Ctrl\+V)/i)).toBeInTheDocument();
   });
 });
 

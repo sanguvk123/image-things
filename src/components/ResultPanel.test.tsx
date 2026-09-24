@@ -49,6 +49,22 @@ describe('announcing the result', () => {
   });
 });
 
+describe('naming the outcome', () => {
+  test('says the work is done, not just that numbers changed', () => {
+    // Review §7: tell the user what value was created. A pair of file sizes
+    // leaves them to work out for themselves whether it worked.
+    renderPanel();
+
+    expect(screen.getByRole('status')).toHaveTextContent(/done/i);
+  });
+
+  test('a note from the tool is still shown alongside', () => {
+    renderPanel({ note: '✓ Under 100KB' });
+
+    expect(screen.getByRole('status')).toHaveTextContent('Under 100KB');
+  });
+});
+
 describe('result dimensions', () => {
   test('shows the output dimensions when the size change is the point', () => {
     // Someone compressing for an upload limit still needs to know the image
