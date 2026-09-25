@@ -22,6 +22,17 @@ export interface CanvasStub {
   }[];
   /** Filter strings assigned to the 2D context, in order. */
   filtersUsed: string[];
+  /**
+   * Delay every subsequent encode until the given promise settles.
+   *
+   * Without this the stub encoder answers within a tick, so a tool goes from
+   * "image selected" to "result ready" with no observable state in between --
+   * and the working state, which only exists during that gap, can never be
+   * asserted on. Holding the encode open is what makes it visible.
+   */
+  holdToBlob: (until: Promise<unknown>) => void;
+  /** Make every subsequent encode fail, for exercising the error state. */
+  failToBlob: () => void;
   restore: () => void;
 }
 
@@ -40,10 +51,20 @@ export function installCanvasStubs(
   const width = options.width ?? 1920;
   const height = options.height ?? 1080;
 
+  /** Set by holdToBlob; encodes wait on this before answering. */
+  let gate: Promise<unknown> | null = null;
+  let failing = false;
+
   const stub: CanvasStub = {
     encodedSize: options.encodedSize ?? 120_000,
     encodeCalls: [],
     filtersUsed: [],
+    holdToBlob: (until) => {
+      gate = until;
+    },
+    failToBlob: () => {
+      failing = true;
+    },
     restore: () => {},
   };
 
@@ -111,12 +132,26 @@ export function installCanvasStubs(
       height: this.height,
     });
 
+    // A real toBlob hands null to the callback on failure rather than
+    // throwing, and the pipeline turns that into the user-facing error.
+    if (failing) {
+      callback(null);
+      return;
+    }
+
     const size = options.sizeModel
       ? options.sizeModel(quality ?? 1, this.width, this.height)
       : stub.encodedSize;
 
     const bytes = new Uint8Array(Math.max(1, Math.round(size)));
-    callback(new Blob([bytes], { type: type ?? 'image/png' }));
+    const blob = new Blob([bytes], { type: type ?? 'image/png' });
+
+    if (gate) {
+      void gate.then(() => callback(blob));
+      return;
+    }
+
+    callback(blob);
   };
 
   let urlCounter = 0;

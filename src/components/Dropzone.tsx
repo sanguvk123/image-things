@@ -31,6 +31,13 @@ interface DropzoneProps {
   /** Formats line under the button, e.g. "JPG • PNG • WebP • HEIC". */
   hint?: string;
   multiple?: boolean;
+  /**
+   * Turns the whole area off while the tool is working.
+   *
+   * Without this the picker stays live during an operation, so a second file
+   * can be chosen mid-run and the finishing operation overwrites it.
+   */
+  disabled?: boolean;
 }
 
 /**
@@ -43,8 +50,17 @@ export function Dropzone({
   onFiles,
   hint = 'JPG • PNG • WebP • HEIC • TIFF',
   multiple = false,
+  disabled = false,
 }: DropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
+  /**
+   * The file we turned away, if any.
+   *
+   * Rejection used to be silent: drop a PDF and the page simply did nothing,
+   * which is indistinguishable from a drop that missed the target or a page
+   * that has hung. Naming the file makes clear which of the three happened.
+   */
+  const [rejected, setRejected] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   /*
@@ -66,87 +82,137 @@ export function Dropzone({
 
   useEffect(() => {
     function onPaste(event: ClipboardEvent) {
+      if (disabled) return;
       const files = Array.from(event.clipboardData?.files ?? []).filter(
         looksLikeImage,
       );
       if (files.length === 0) return;
       event.preventDefault();
+      setRejected(null);
       onFiles(multiple ? files : files.slice(0, 1));
     }
 
     window.addEventListener('paste', onPaste);
     return () => window.removeEventListener('paste', onPaste);
-  }, [onFiles, multiple]);
+  }, [onFiles, multiple, disabled]);
+
+  /**
+   * Take the images from a drop or a pick, and say so when there are none.
+   *
+   * Pasting deliberately does not report rejection: a paste carries whatever
+   * happened to be on the clipboard and is often aimed at something else
+   * entirely, so complaining about it would fire on ordinary text copying.
+   * A drop or a pick, by contrast, is unambiguously aimed at this control.
+   */
+  function accept(candidates: File[]) {
+    const files = candidates.filter(looksLikeImage);
+
+    if (files.length === 0) {
+      const first = candidates[0];
+      setRejected(first ? first.name : 'That file');
+      return;
+    }
+
+    setRejected(null);
+    onFiles(multiple ? files : files.slice(0, 1));
+  }
 
   function handleDrop(event: React.DragEvent) {
     event.preventDefault();
     dragDepth.current = 0;
     setIsDragging(false);
+    if (disabled) return;
 
-    const files = Array.from(event.dataTransfer.files).filter(looksLikeImage);
-    if (files.length > 0) onFiles(multiple ? files : files.slice(0, 1));
+    accept(Array.from(event.dataTransfer.files));
   }
 
+  const label = multiple ? 'Choose images' : 'Choose image';
+
   return (
-    <div
-      onDragEnter={(event) => {
-        event.preventDefault();
-        dragDepth.current += 1;
-        setIsDragging(true);
-      }}
-      onDragOver={(event) => event.preventDefault()}
-      onDragLeave={() => {
-        dragDepth.current -= 1;
-        if (dragDepth.current <= 0) setIsDragging(false);
-      }}
-      onDrop={handleDrop}
-      className={`flex flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-10 text-center transition-all duration-200 ${
-        isDragging
-          ? 'scale-[1.01] border-accent bg-accent-soft'
-          : 'border-line-strong bg-surface hover:border-accent/50 hover:bg-accent-soft/30'
-      }`}
-    >
-      <UploadIcon active={isDragging} />
-
-      <p className="mt-3 text-ui text-ink">Drop image here</p>
-
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        className="mt-3 rounded-full bg-gradient-to-r from-accent to-convert px-5 py-2.5 text-sm font-medium text-white shadow-[0_4px_14px_-4px_rgba(10,132,255,0.5)] transition-transform duration-150 hover:scale-[1.02] active:scale-[0.99]"
-      >
-        {multiple ? 'Choose images' : 'Choose image'}
-      </button>
-
-      <p className="mt-4 text-xs text-ink-faint">{hint}</p>
-      {/*
-        Naming the key teaches it (review §18). Someone who has just taken a
-        screenshot is one keystroke from done -- but only if they know the
-        keystroke is there.
-      */}
-      {/*
-        Naming the key teaches it (review §18). Someone who has just taken a
-        screenshot is one keystroke from done -- but only if they know the
-        keystroke is there.
-      */}
-      <p className="mt-1 text-xs text-ink-faint">
-        or paste an image with {shortcut}
-      </p>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*,.heic,.heif,.tif,.tiff"
-        multiple={multiple}
-        aria-label={multiple ? 'Choose images' : 'Choose image'}
-        className="hidden"
-        onChange={(event) => {
-          const files = Array.from(event.target.files ?? []);
-          if (files.length > 0) onFiles(files);
-          // Reset so picking the same file twice still fires a change event.
-          event.target.value = '';
+    <div>
+      <div
+        data-testid="dropzone"
+        onDragEnter={(event) => {
+          event.preventDefault();
+          if (disabled) return;
+          dragDepth.current += 1;
+          setIsDragging(true);
         }}
-      />
+        onDragOver={(event) => event.preventDefault()}
+        onDragLeave={() => {
+          dragDepth.current -= 1;
+          if (dragDepth.current <= 0) setIsDragging(false);
+        }}
+        onDrop={handleDrop}
+        /*
+         * The upload area is the tool, so it is sized like the tool rather
+         * than like a form field: taller than it was, and the first thing the
+         * eye lands on after the heading.
+         *
+         * Not focusable and carrying no role. Everything it offers is also
+         * offered by the button inside it, and a focus stop that duplicates
+         * the next focus stop just makes the page longer to get through --
+         * worse for the keyboard users it would appear to be helping.
+         */
+        className={`flex flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-14 text-center transition-all duration-200 sm:py-16 ${
+          disabled
+            ? 'cursor-not-allowed border-line bg-surface opacity-60'
+            : isDragging
+              ? 'scale-[1.01] border-accent bg-accent-soft'
+              : rejected
+                ? 'border-bad/60 bg-surface'
+                : 'border-line-strong bg-surface hover:border-accent/50 hover:bg-accent-soft/30'
+        }`}
+      >
+        <UploadIcon active={isDragging} />
+
+        <p className="mt-4 text-lg font-medium text-ink">Drop image here</p>
+
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={disabled}
+          className="mt-4 rounded-full bg-gradient-to-r from-accent to-convert px-6 py-3 text-ui font-medium text-white shadow-[0_4px_14px_-4px_rgba(10,132,255,0.5)] transition-transform duration-150 hover:scale-[1.02] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:scale-100"
+        >
+          {label}
+        </button>
+
+        {/*
+          Naming the key teaches it (review §18). Someone who has just taken a
+          screenshot is one keystroke from done -- but only if they know the
+          keystroke is there.
+        */}
+        <p className="mt-5 text-meta text-ink-faint">
+          Paste with {shortcut} • Drop • Browse
+        </p>
+        <p className="mt-1 text-meta text-ink-faint">{hint}</p>
+
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*,.heic,.heif,.tif,.tiff"
+          multiple={multiple}
+          disabled={disabled}
+          aria-label={label}
+          className="hidden"
+          onChange={(event) => {
+            accept(Array.from(event.target.files ?? []));
+            // Reset so picking the same file twice still fires a change event.
+            event.target.value = '';
+          }}
+        />
+      </div>
+
+      {/*
+        Sits outside the dashed area so it cannot be mistaken for part of the
+        instructions, and carries role="alert" so it is announced rather than
+        silently appearing below the fold.
+      */}
+      {rejected ? (
+        <p role="alert" className="mt-3 text-center text-meta text-bad">
+          {rejected} is not an image this tool can open. Try {hint}.
+        </p>
+      ) : null}
     </div>
   );
 }

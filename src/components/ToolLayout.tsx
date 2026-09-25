@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropzone } from './Dropzone';
 import { ImagePreview } from './ImagePreview';
+import { ProcessingState } from './ProcessingState';
 import { ResultPanel } from './ResultPanel';
 import { ContinueWith } from './ContinueWith';
 import { ErrorNote } from './controls';
@@ -9,7 +10,7 @@ import { ToolIcon, categoryStyle } from './ToolIcon';
 import { ToolContent } from './ToolContent';
 import { takeHandoff } from '@/image/handoff';
 import type { LoadedImage, ProcessedImage } from '@/image/pipeline';
-import { headingFor, type Tool } from '@/tools/registry';
+import { headingFor, type Tool, type ToolCategory } from '@/tools/registry';
 import { relatedTools } from '@/seo/internalLinks';
 
 interface ToolLayoutProps {
@@ -17,6 +18,19 @@ interface ToolLayoutProps {
   image: LoadedImage | null;
   result: ProcessedImage | null;
   error: string | null;
+  /**
+   * True while the tool's operation is running.
+   *
+   * Optional because three tools drive their own bodies and a handful run no
+   * asynchronous work at all; those simply never pass it.
+   */
+  busy?: boolean;
+  /**
+   * What to say while working, in the tool's own words -- "Compressing your
+   * image…" rather than a generic spinner caption. Falls back to something
+   * true but plain.
+   */
+  busyLabel?: string;
   onSelectFile: (file: File) => void;
   onReset: () => void;
   /** The tool's own controls, shown beside the preview once an image is in. */
@@ -33,6 +47,23 @@ interface ToolLayoutProps {
 }
 
 /**
+ * What to say while an operation runs, keyed by category.
+ *
+ * Derived rather than written per tool. Twenty-two bespoke strings would be
+ * twenty-two chances for one to drift out of step with what its tool actually
+ * does, and the category already encodes the verb well enough to be accurate
+ * for every member of it. A tool that needs something more specific can still
+ * pass busyLabel.
+ */
+const BUSY_LABEL: Record<ToolCategory, string> = {
+  optimize: 'Compressing your image…',
+  convert: 'Converting your image…',
+  transform: 'Resizing your image…',
+  adjust: 'Applying your changes…',
+  privacy: 'Cleaning your image…',
+};
+
+/**
  * The universal tool page (spec §11).
  *
  * Every tool looks the same: title, one sentence, then either the upload area
@@ -43,6 +74,8 @@ export function ToolLayout({
   image,
   result,
   error,
+  busy = false,
+  busyLabel,
   onSelectFile,
   onReset,
   children,
@@ -95,13 +128,25 @@ export function ToolLayout({
               previewFilter={previewFilter}
             />
             {error && <ErrorNote>{error}</ErrorNote>}
-            {children}
+            {/*
+              While working, the tool's controls are replaced rather than
+              merely disabled. Leaving a greyed-out panel on screen invites the
+              user to keep poking at settings that no longer affect the run in
+              flight, and it buries the one fact that matters -- that something
+              is happening -- among a dozen inert controls.
+            */}
+            {busy ? (
+              <ProcessingState label={busyLabel ?? BUSY_LABEL[tool.category]} />
+            ) : (
+              children
+            )}
           </div>
         ) : (
           <div className="space-y-3">
             <Dropzone
               onFiles={(files) => files[0] && onSelectFile(files[0])}
               hint={acceptHint}
+              disabled={busy}
             />
             {error && <ErrorNote>{error}</ErrorNote>}
             <TrustBadges />

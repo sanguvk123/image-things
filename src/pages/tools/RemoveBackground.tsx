@@ -22,6 +22,7 @@ export function RemoveBackground({ tool }: { tool: Tool }) {
       image={image}
       result={result}
       error={error}
+      busy={busy}
       onSelectFile={selectFile}
       onReset={reset}
       hideSavings

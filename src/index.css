@@ -96,11 +96,61 @@
   }
 }
 
+/*
+ * The indeterminate processing indicator.
+ *
+ * A segment sliding along a track. It conveys "running" and deliberately
+ * claims nothing about how far along the work is, because none of these
+ * operations can report that honestly.
+ *
+ * Only worth animating since the pixel work moved to a Worker: while the main
+ * thread was blocked this would have sat frozen mid-slide, which reads as a
+ * crashed page rather than a busy one.
+ */
+@keyframes processing-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+@keyframes processing-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.processing-bar {
+  animation: processing-slide 1.1s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /*
+   * Exempt from the blanket rule above.
+   *
+   * Collapsing this to 0.01ms would freeze the bar mid-slide, and a stopped
+   * indicator does not read as "reduced motion" -- it reads as "hung". The
+   * user asked for less movement, not for a worse answer to "is it working?",
+   * so the slide becomes an in-place opacity pulse: still clearly alive, with
+   * no lateral movement and nothing that could trigger vestibular symptoms.
+   */
+  .processing-bar {
+    animation: processing-pulse 1.6s ease-in-out infinite !important;
+    animation-duration: 1.6s !important;
+    transform: none;
+    width: 100%;
   }
 }

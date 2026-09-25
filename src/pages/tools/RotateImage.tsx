@@ -28,6 +28,7 @@ export function RotateImage({ tool }: { tool: Tool }) {
       image={image}
       result={result}
       error={error}
+      busy={busy}
       onSelectFile={selectFile}
       onReset={startOver}
       hideSavings

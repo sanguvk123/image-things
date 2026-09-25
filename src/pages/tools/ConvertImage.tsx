@@ -26,6 +26,7 @@ export function ConvertImage({ tool }: { tool: Tool }) {
       image={image}
       result={result}
       error={error}
+      busy={busy}
       onSelectFile={selectFile}
       onReset={reset}
       acceptHint={`${fromLabel} • or any image`}

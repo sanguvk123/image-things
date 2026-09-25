@@ -57,6 +57,7 @@ export function AdjustImage({
       image={image}
       result={result}
       error={error}
+      busy={busy}
       onSelectFile={selectFile}
       onReset={startOver}
       hideSavings
