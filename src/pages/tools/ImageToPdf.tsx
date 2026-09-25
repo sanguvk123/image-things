@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dropzone } from '@/components/Dropzone';
+import { ProcessingState } from '@/components/ProcessingState';
 import { ToolPage } from '@/components/ToolLayout';
 import { ActionButton, ErrorNote, PRIVACY_LINE } from '@/components/controls';
 import { formatBytes } from '@/image/format';
@@ -142,6 +143,17 @@ export function ImageToPdf({ tool }: { tool: Tool }) {
               Start over
             </button>
           </div>
+        ) : busy ? (
+          /*
+            Assembling several photos into one document is the slowest thing
+            the site does, and it is the page where a frozen-looking interface
+            is most likely to be abandoned. The page list and the dropzone are
+            replaced rather than disabled: a page added mid-build would either
+            be dropped from the finished document or land in an invisible
+            queue, and neither is worth explaining when hiding the control
+            says it plainly.
+          */
+          <ProcessingState label="Building your PDF…" />
         ) : (
           <>
             {images.length > 0 && (

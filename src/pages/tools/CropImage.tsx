@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ToolPage } from '@/components/ToolLayout';
 import { Dropzone } from '@/components/Dropzone';
+import { ProcessingState } from '@/components/ProcessingState';
 import { ResultPanel } from '@/components/ResultPanel';
 import {
   ActionButton,
@@ -152,34 +153,46 @@ export function CropImage({ tool }: { tool: Tool }) {
 
             {error && <ErrorNote>{error}</ErrorNote>}
 
-            <PillGroup legend="Aspect ratio">
-              {ASPECT_RATIOS.map((option) => (
-                <Pill
-                  key={option.label}
-                  selected={ratio === option.value}
-                  onClick={() => setRatio(option.value)}
+            {/*
+              Unlike the other tools the image stays on screen while the crop
+              runs: it is the thing being acted on, and the selection the user
+              just dragged is the context for what they are waiting for.
+              Only the controls below it are replaced.
+            */}
+            {busy ? (
+              <ProcessingState label="Cropping your image…" />
+            ) : (
+              <>
+                <PillGroup legend="Aspect ratio">
+                  {ASPECT_RATIOS.map((option) => (
+                    <Pill
+                      key={option.label}
+                      selected={ratio === option.value}
+                      onClick={() => setRatio(option.value)}
+                    >
+                      {option.label}
+                    </Pill>
+                  ))}
+                </PillGroup>
+
+                <ActionButton
+                  busy={busy}
+                  onClick={() =>
+                    run((img) => cropImage(img, toPixels(rect, img.width, img.height)))
+                  }
                 >
-                  {option.label}
-                </Pill>
-              ))}
-            </PillGroup>
+                  Crop Image
+                </ActionButton>
 
-            <ActionButton
-              busy={busy}
-              onClick={() =>
-                run((img) => cropImage(img, toPixels(rect, img.width, img.height)))
-              }
-            >
-              Crop Image
-            </ActionButton>
-
-            <button
-              type="button"
-              onClick={startOver}
-              className="w-full text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
-            >
-              Remove ×
-            </button>
+                <button
+                  type="button"
+                  onClick={startOver}
+                  className="w-full text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
+                >
+                  Remove ×
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
