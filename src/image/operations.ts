@@ -1,7 +1,6 @@
 import type { OutputFormat } from '@/tools/registry';
 import type { CropRect } from './crop';
-import { sharpenPixels, SHARPEN_AMOUNT, type SharpenLevel } from './sharpen';
-import { removeBackgroundPixels } from './background';
+import { SHARPEN_AMOUNT, type SharpenLevel } from './sharpen';
 import {
   context2d,
   createCanvas,
@@ -15,6 +14,7 @@ import {
 } from './pipeline';
 import { scaleToFit } from './format';
 import { searchForTargetSize } from './targetSize';
+import { runPixelJob } from './worker/pool';
 
 /**
  * The actual image operations, one exported function per user intent.
@@ -294,12 +294,17 @@ export async function sharpenImage(
   ctx.drawImage(image.bitmap, 0, 0);
 
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const sharpened = sharpenPixels(
-    pixels.data,
-    canvas.width,
-    canvas.height,
-    SHARPEN_AMOUNT[level],
-  );
+  // Off the main thread: a 3x3 convolution over 24 MP is a 232 ms synchronous
+  // loop, and the page cannot paint for the whole of it. The buffer is copied
+  // once here because transferring neuters it, and the canvas still needs its
+  // own ImageData to write back into.
+  const sharpened = await runPixelJob({
+    kind: 'sharpen',
+    pixels: new Uint8ClampedArray(pixels.data),
+    width: canvas.width,
+    height: canvas.height,
+    amount: SHARPEN_AMOUNT[level],
+  });
   pixels.data.set(sharpened);
   ctx.putImageData(pixels, 0, 0);
 
@@ -356,9 +361,17 @@ export async function upscaleImage(
   const { canvas, ctx } = drawToCanvas(image.bitmap, width, height, format);
 
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  pixels.data.set(
-    sharpenPixels(pixels.data, canvas.width, canvas.height, SHARPEN_AMOUNT.light),
-  );
+  // This is the largest convolution the app ever runs: a 4x upscale makes the
+  // canvas sixteen times the source area, so a 3 MP photo becomes a 48 MP
+  // sharpen pass. It belongs off the main thread more than any other job.
+  const sharpened = await runPixelJob({
+    kind: 'sharpen',
+    pixels: new Uint8ClampedArray(pixels.data),
+    width: canvas.width,
+    height: canvas.height,
+    amount: SHARPEN_AMOUNT.light,
+  });
+  pixels.data.set(sharpened);
   ctx.putImageData(pixels, 0, 0);
 
   const blob = await encode(canvas, format, EDIT_QUALITY);
@@ -387,9 +400,14 @@ export async function removeBackground(
   ctx.drawImage(image.bitmap, 0, 0);
 
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  pixels.data.set(
-    removeBackgroundPixels(pixels.data, canvas.width, canvas.height, { tolerance }),
-  );
+  const cleared = await runPixelJob({
+    kind: 'removeBackground',
+    pixels: new Uint8ClampedArray(pixels.data),
+    width: canvas.width,
+    height: canvas.height,
+    tolerance,
+  });
+  pixels.data.set(cleared);
   ctx.putImageData(pixels, 0, 0);
 
   const blob = await encode(canvas, format);

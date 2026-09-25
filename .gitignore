@@ -8,3 +8,6 @@ coverage
 .DS_Store
 .idex
 *.log
+
+# Throwaway browser profiles created by the .audit measurement harness.
+.audit/chrome-profile-*
