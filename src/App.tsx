@@ -39,9 +39,15 @@ function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-surface/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center px-5 py-3 sm:px-6">
+        {/*
+          min-h-11 for the same reason as the tool-page back link: measured at
+          120x28, which is a comfortable mouse target and an awkward thumb one.
+          This is the only way home from a tool page on mobile, so it is worth
+          the full 44px. The row already has py-3, so the header does not grow.
+        */}
         <Link
           to="/"
-          className="flex items-center gap-2 text-ui font-semibold tracking-[-0.01em] text-ink"
+          className="flex min-h-11 items-center gap-2 text-ui font-semibold tracking-[-0.01em] text-ink"
         >
           <span
             aria-hidden="true"

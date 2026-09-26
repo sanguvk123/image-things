@@ -184,9 +184,16 @@ export function ToolPage({
 
   return (
     <div className="mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6">
+      {/*
+        Padded to a 44px tap target rather than sized by its text.
+        Measured at 68x17 before this: comfortably clickable with a mouse and
+        genuinely hard to hit with a thumb. The negative margin keeps the text
+        optically aligned with the heading below, so the target grows without
+        the layout shifting.
+      */}
       <Link
         to="/"
-        className="text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
+        className="-ml-2 inline-flex min-h-11 items-center px-2 text-sm text-ink-faint transition-colors duration-150 hover:text-ink"
       >
         ← All tools
       </Link>
@@ -299,7 +306,12 @@ export function RelatedTools({
             <Link
               key={other.slug}
               to={`/${other.slug}`}
-              className={`flex items-center gap-2.5 rounded-lg border border-line bg-surface px-3 py-2.5 transition-colors duration-150 hover:bg-canvas ${style.ring}`}
+              /*
+                min-h-11 (44px) rather than padding alone: these measured 41px,
+                which is just under the threshold and exactly the kind of
+                near-miss that survives a visual review.
+              */
+              className={`flex min-h-11 items-center gap-2.5 rounded-lg border border-line bg-surface px-3 py-2.5 transition-colors duration-150 hover:bg-canvas ${style.ring}`}
             >
               <span className={`shrink-0 ${style.text}`}>
                 <ToolIcon tool={other} className="h-[18px] w-[18px]" />
